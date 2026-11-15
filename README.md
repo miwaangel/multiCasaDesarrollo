@@ -102,6 +102,7 @@ cp .env.example .env      # en Windows: copy .env.example .env
 # editar .env con los datos de tu MySQL
 npm run db:create         # crea la base de datos multicasa (utf8mb4)
 npm run db:migrate        # crea las 10 tablas y las 2 vistas
+npm run db:seed           # datos de prueba: admin, catálogos, 20 casas y 3 noticias
 npm run dev               # http://localhost:3000/api/health
 ```
 
@@ -114,7 +115,9 @@ npm run dev               # http://localhost:3000/api/health
 | `npm run db:migrate` | Ejecuta las migraciones pendientes |
 | `npm run db:undo` | Revierte la última migración (`db:undo:all` revierte todas) |
 | `npm run db:seed` | Carga los seeders (datos de catálogo y de prueba) |
-| `npm run db:reset` | Revierte todo, vuelve a migrar y carga los seeders |
+| `npm run db:reset` | Revierte seeders y migraciones, vuelve a migrar y carga los seeders (deja la BD como recién instalada) |
+
+Admin de prueba que crean los seeders: `admin@multicasa.com` con la contraseña de `SEED_ADMIN_PASSWORD` en tu `.env` (si está vacía, `Admin123!`). Las fotos de las casas de prueba están en `backend/uploads/seed/`.
 
 La base de datos se crea **solo con las migraciones de Sequelize**. El script [`docs/base-de-datos/multicasa_database.sql`](docs/base-de-datos/multicasa_database.sql) es la referencia de diseño; si cambias una tabla, crea una migración nueva y actualiza también ese documento.
 

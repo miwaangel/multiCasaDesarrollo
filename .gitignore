@@ -6,6 +6,8 @@ build/
 coverage/
 backend/uploads/*
 !backend/uploads/.gitkeep
+# Las fotos de los seeders sí se versionan
+!backend/uploads/seed/
 *.log
 .DS_Store
 Thumbs.db
