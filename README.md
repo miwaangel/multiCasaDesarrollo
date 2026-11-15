@@ -14,9 +14,9 @@ Aplicación web de bienes raíces: catálogo y búsqueda de casas con mapa (siti
 ```
 multiCasaDesarrollo/
 ├── backend/
-│   ├── db/                  # Script SQL de la BD (multicasa_database.sql)
 │   ├── src/
 │   │   ├── config/          # env.js (variables de entorno) y Database.js (Singleton)
+│   │   ├── database/        # sequelize-cli: config.js, migrations/ y seeders/
 │   │   ├── controllers/     # Reciben req/res, llaman al service y responden
 │   │   ├── services/        # Lógica de negocio (no conocen Express)
 │   │   ├── repositories/    # Acceso a datos con Sequelize (BaseRepository)
@@ -100,7 +100,8 @@ cd backend
 npm install
 cp .env.example .env      # en Windows: copy .env.example .env
 # editar .env con los datos de tu MySQL
-mysql -u root -p < db/multicasa_database.sql
+npm run db:create         # crea la base de datos multicasa (utf8mb4)
+npm run db:migrate        # crea las 10 tablas y las 2 vistas
 npm run dev               # http://localhost:3000/api/health
 ```
 
@@ -109,6 +110,13 @@ npm run dev               # http://localhost:3000/api/health
 | `npm run dev` | Servidor con recarga automática (nodemon) |
 | `npm start` | Servidor normal |
 | `npm test` | Pruebas con Jest + Supertest |
+| `npm run db:create` | Crea la base de datos indicada en `DB_NAME` |
+| `npm run db:migrate` | Ejecuta las migraciones pendientes |
+| `npm run db:undo` | Revierte la última migración (`db:undo:all` revierte todas) |
+| `npm run db:seed` | Carga los seeders (datos de catálogo y de prueba) |
+| `npm run db:reset` | Revierte todo, vuelve a migrar y carga los seeders |
+
+La base de datos se crea **solo con las migraciones de Sequelize**. El script [`docs/base-de-datos/multicasa_database.sql`](docs/base-de-datos/multicasa_database.sql) es la referencia de diseño; si cambias una tabla, crea una migración nueva y actualiza también ese documento.
 
 ## Cómo agregar un módulo nuevo (ejemplo: casas)
 
