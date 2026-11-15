@@ -1,0 +1,12 @@
+const path = require('path');
+
+/**
+ * Rutas de sequelize-cli. Config, migraciones y seeders viven en src/database/;
+ * los modelos se quedan en src/models/ (donde los carga la app).
+ */
+module.exports = {
+  config: path.resolve(__dirname, 'src/database/config/config.js'),
+  'migrations-path': path.resolve(__dirname, 'src/database/migrations'),
+  'seeders-path': path.resolve(__dirname, 'src/database/seeders'),
+  'models-path': path.resolve(__dirname, 'src/models'),
+};

@@ -29,9 +29,14 @@ class Database {
         underscored: true, // columnas snake_case en la BD, camelCase en el código
         timestamps: true,
         freezeTableName: true,
+        charset: 'utf8mb4',
+        collate: 'utf8mb4_unicode_ci',
       },
       pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
-      dialectOptions: { connectTimeout: 5000 },
+      dialectOptions: {
+        connectTimeout: 5000,
+        decimalNumbers: true, // DECIMAL llega como number (precio, lat, lng...) y no como string
+      },
     });
   }
 
