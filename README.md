@@ -33,6 +33,10 @@ multiCasaDesarrollo/
 └── docs/                    # Documentación y diagrama de Gantt
 ```
 
+## Documentación
+
+- [Modelo físico de la base de datos](docs/base-de-datos/README.md): diagrama entidad-relación, tablas, índices, vistas y script SQL de referencia.
+
 ## Patrones de diseño
 
 ### 1. Arquitectura en capas: Controller → Service → Repository
