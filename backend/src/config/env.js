@@ -21,6 +21,10 @@ const env = Object.freeze({
     logging: process.env.DB_LOGGING === 'true',
   }),
 
+  seed: Object.freeze({
+    adminPassword: process.env.SEED_ADMIN_PASSWORD || 'Admin123!',
+  }),
+
   jwt: Object.freeze({
     secret: process.env.JWT_SECRET || '',
     expiresIn: process.env.JWT_EXPIRES_IN || '8h',
