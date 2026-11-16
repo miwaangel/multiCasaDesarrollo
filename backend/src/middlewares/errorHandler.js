@@ -8,7 +8,11 @@ const AppError = require('../utils/AppError');
 // eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, next) {
   if (err instanceof AppError) {
-    return res.status(err.status).json({ error: { codigo: err.codigo, mensaje: err.message } });
+    const error = { codigo: err.codigo, mensaje: err.message };
+    if (err.detalles) {
+      error.detalles = err.detalles;
+    }
+    return res.status(err.status).json({ error });
   }
 
   if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {

@@ -1,13 +1,16 @@
 /**
  * Error de negocio con código HTTP. El middleware errorHandler lo convierte en:
  *   { "error": { "codigo": "NO_ENCONTRADO", "mensaje": "..." } }
+ * Si trae `detalles` (por ejemplo, los campos que no pasaron la validación) se agregan
+ * dentro de "error": { "codigo", "mensaje", "detalles": [{ "campo", "mensaje" }] }
  */
 class AppError extends Error {
-  constructor(status, codigo, mensaje) {
+  constructor(status, codigo, mensaje, detalles = undefined) {
     super(mensaje);
     this.name = 'AppError';
     this.status = status;
     this.codigo = codigo;
+    this.detalles = detalles;
   }
 
   static badRequest(mensaje = 'Solicitud inválida', codigo = 'SOLICITUD_INVALIDA') {

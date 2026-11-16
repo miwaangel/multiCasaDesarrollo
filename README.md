@@ -91,6 +91,26 @@ const { sequelize } = Database.getInstance(); // siempre la misma instancia
 
 En un service o repository basta con `throw AppError.notFound('...')` (o `badRequest`, `unauthorized`, `forbidden`); el middleware `errorHandler` arma la respuesta.
 
+Si la validación de express-validator falla (middleware `validar`), el error trae además el detalle por campo:
+
+```json
+{ "error": { "codigo": "DATOS_INVALIDOS", "mensaje": "Revisa los datos enviados",
+             "detalles": [{ "campo": "email", "mensaje": "El email no es válido" }] } }
+```
+
+## Autenticación de administradores (JWT)
+
+| Endpoint | Qué hace |
+|---|---|
+| `POST /api/auth/login` | Recibe `{ email, password }` y regresa `{ data: { token, admin } }`. Error: `401 CREDENCIALES_INVALIDAS` |
+| `GET /api/admin/perfil` | Datos del admin dueño del token |
+
+- El token dura `JWT_EXPIRES_IN` (8h) y se firma con `JWT_SECRET` de tu `.env`. Genera tu propio secreto con:
+  `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"`
+- El frontend lo manda en cada petición privada: `Authorization: Bearer <token>`.
+- **Todas** las rutas montadas dentro de `src/routes/admin.routes.js` ya están protegidas (el middleware `auth` se aplica a todo el router). Para un módulo privado nuevo basta con agregar ahí `router.use('/casas', adminCasaRoutes());`. Errores: `401 TOKEN_REQUERIDO` (sin token) y `401 TOKEN_INVALIDO` (firma incorrecta o vencido).
+- En el controller, el admin autenticado está en `req.admin` (`{ id, email }`).
+
 ## Cómo correr el backend
 
 Requisitos: Node.js 18 o superior y MySQL 8.
