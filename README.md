@@ -125,6 +125,8 @@ Si la validación de express-validator falla (middleware `validar`), el error tr
 | `PATCH /api/admin/casas/:id/estatus` | Admin | `{ "estatus": "vendida" }` → `fechaVenta` = hoy y deja de ser destacada |
 | `DELETE /api/admin/casas/:id` | Admin | Borra la casa y los archivos de sus imágenes |
 | `DELETE /api/admin/casas/:id/imagenes/:imagenId` | Admin | Borra una imagen; si era la portada, la siguiente toma su lugar |
+| `GET /api/admin/dashboard/rangos-precio` | Admin | Siempre los 5 rangos de precio en orden (con 0 si no hay casas); `total` = número de casas |
+| `GET /api/admin/dashboard/estatus` | Admin | `{ venta, vendida, total }` (siempre las dos, con 0 si no hay) |
 
 - Las imágenes subidas se guardan en `backend/uploads/casas/` (no se suben a git) y se ven en `http://localhost:3000/uploads/casas/<archivo>`. Solo jpg, png o webp de máximo 5 MB (`400 ARCHIVO_INVALIDO` / `400 ARCHIVO_MUY_GRANDE`).
 - Las fotos de los seeders (`/uploads/seed/...`) nunca se borran desde la API, aunque se borre la casa.
