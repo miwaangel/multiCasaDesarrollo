@@ -60,6 +60,15 @@ class BaseRepository {
     await registro.destroy(options);
     return true;
   }
+
+  /**
+   * Ejecuta `trabajo(t)` dentro de una transacción. Si `trabajo` termina bien se hace COMMIT;
+   * si lanza un error se hace ROLLBACK y el error se vuelve a lanzar.
+   * Cada operación de adentro debe recibir { transaction: t }.
+   */
+  transaccion(trabajo) {
+    return this.model.sequelize.transaction(trabajo);
+  }
 }
 
 module.exports = BaseRepository;
