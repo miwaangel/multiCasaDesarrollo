@@ -342,8 +342,18 @@ describe('Rutas de admin sin token → 401', () => {
 
   it('un POST sin token no guarda ningún archivo', async () => {
     const antes = archivosSubidos().length;
-    const res = await request(app).post('/api/admin/casas').attach('imagenes', IMG_JPG);
-    expect(res.status).toBe(401);
+    // auth responde 401 sin leer el archivo; a veces Node cierra la conexión mientras el
+    // cliente aún lo envía (ECONNRESET). Las dos cosas significan "rechazado".
+    const res = await request(app)
+      .post('/api/admin/casas')
+      .attach('imagenes', IMG_JPG)
+      .catch((err) => {
+        if (err.code !== 'ECONNRESET') throw err;
+        return null;
+      });
+    if (res) {
+      expect(res.status).toBe(401);
+    }
     expect(archivosSubidos()).toHaveLength(antes);
   });
 });

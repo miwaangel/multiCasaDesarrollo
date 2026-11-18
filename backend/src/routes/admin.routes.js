@@ -3,6 +3,7 @@ const AuthController = require('../controllers/AuthController');
 const authMiddleware = require('../middlewares/auth');
 const asyncHandler = require('../utils/asyncHandler');
 const adminCasaRoutes = require('./adminCasa.routes');
+const dashboardRoutes = require('./dashboard.routes');
 
 /**
  * Router del sitio privado, montado en /api/admin.
@@ -38,6 +39,7 @@ function adminRoutes({ authController = new AuthController(), auth = authMiddlew
    */
   router.get('/perfil', asyncHandler(authController.perfil));
   router.use('/casas', adminCasaRoutes());
+  router.use('/dashboard', dashboardRoutes());
 
   return router;
 }
