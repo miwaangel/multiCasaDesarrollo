@@ -2,6 +2,7 @@ const { Router } = require('express');
 const AuthController = require('../controllers/AuthController');
 const authMiddleware = require('../middlewares/auth');
 const asyncHandler = require('../utils/asyncHandler');
+const adminCasaRoutes = require('./adminCasa.routes');
 
 /**
  * Router del sitio privado, montado en /api/admin.
@@ -36,6 +37,7 @@ function adminRoutes({ authController = new AuthController(), auth = authMiddlew
    *       bearerFormat: JWT
    */
   router.get('/perfil', asyncHandler(authController.perfil));
+  router.use('/casas', adminCasaRoutes());
 
   return router;
 }

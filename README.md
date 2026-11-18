@@ -111,6 +111,25 @@ Si la validación de express-validator falla (middleware `validar`), el error tr
 - **Todas** las rutas montadas dentro de `src/routes/admin.routes.js` ya están protegidas (el middleware `auth` se aplica a todo el router). Para un módulo privado nuevo basta con agregar ahí `router.use('/casas', adminCasaRoutes());`. Errores: `401 TOKEN_REQUERIDO` (sin token) y `401 TOKEN_INVALIDO` (firma incorrecta o vencido).
 - En el controller, el admin autenticado está en `req.admin` (`{ id, email }`).
 
+## Casas e imágenes
+
+| Endpoint | Acceso | Qué hace |
+|---|---|---|
+| `GET /api/casas/destacadas` | Público | Casas en venta destacadas, con `portada` |
+| `GET /api/casas/:id` | Público | Detalle con `imagenes`, `amenidades` y `formasPago` (las vendidas dan 404) |
+| `GET /api/formas-pago` · `GET /api/amenidades[?agrupar=tipo]` | Público | Catálogos |
+| `GET /api/admin/casas?estatus=&busqueda=&pagina=&limite=` | Admin | Todas las casas con `portada`; responde `{ data, total, pagina, limite }` |
+| `GET /api/admin/casas/:id` | Admin | Detalle (incluye vendidas) |
+| `POST /api/admin/casas` | Admin | Alta en `multipart/form-data`: campos + `imagenes` (hasta 10) + `amenidadIds` + `formaPagoIds` |
+| `PUT /api/admin/casas/:id` | Admin | Edita lo que se envíe; imágenes nuevas se agregan; `amenidadIds`/`formaPagoIds` reemplazan |
+| `PATCH /api/admin/casas/:id/estatus` | Admin | `{ "estatus": "vendida" }` → `fechaVenta` = hoy y deja de ser destacada |
+| `DELETE /api/admin/casas/:id` | Admin | Borra la casa y los archivos de sus imágenes |
+| `DELETE /api/admin/casas/:id/imagenes/:imagenId` | Admin | Borra una imagen; si era la portada, la siguiente toma su lugar |
+
+- Las imágenes subidas se guardan en `backend/uploads/casas/` (no se suben a git) y se ven en `http://localhost:3000/uploads/casas/<archivo>`. Solo jpg, png o webp de máximo 5 MB (`400 ARCHIVO_INVALIDO` / `400 ARCHIVO_MUY_GRANDE`).
+- Las fotos de los seeders (`/uploads/seed/...`) nunca se borran desde la API, aunque se borre la casa.
+- Alta y edición son una **transacción**: si algo falla no queda nada a medias en la BD y se borran del disco las imágenes recién subidas.
+
 ## Cómo correr el backend
 
 Requisitos: Node.js 18 o superior y MySQL 8.
@@ -130,7 +149,7 @@ npm run dev               # http://localhost:3000/api/health
 |---|---|
 | `npm run dev` | Servidor con recarga automática (nodemon) |
 | `npm start` | Servidor normal |
-| `npm test` | Pruebas con Jest + Supertest |
+| `npm test` | Pruebas con Jest + Supertest. **Necesita MySQL encendido**: las pruebas de casas crean solas la base `multicasa_test` (tu base `multicasa` no se toca) |
 | `npm run db:create` | Crea la base de datos indicada en `DB_NAME` |
 | `npm run db:migrate` | Ejecuta las migraciones pendientes |
 | `npm run db:undo` | Revierte la última migración (`db:undo:all` revierte todas) |

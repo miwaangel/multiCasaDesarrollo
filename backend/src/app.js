@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const env = require('./config/env');
 const apiRoutes = require('./routes');
 const notFound = require('./middlewares/notFound');
@@ -23,7 +22,7 @@ class App {
     this.express.use(cors({ origin: env.corsOrigin }));
     this.express.use(express.json({ limit: '1mb' }));
     this.express.use(express.urlencoded({ extended: true }));
-    this.express.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
+    this.express.use('/uploads', express.static(env.uploadsDir));
   }
 
   #routes() {
