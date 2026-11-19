@@ -28,6 +28,9 @@ const env = Object.freeze({
     logging: process.env.DB_LOGGING === 'true',
   }),
 
+  // Se mezcla con IP + user-agent antes de sacar el SHA-256 del visitante (nunca se guarda la IP)
+  visitasSalt: process.env.VISITAS_SALT || '',
+
   seed: Object.freeze({
     adminPassword: process.env.SEED_ADMIN_PASSWORD || 'Admin123!',
   }),

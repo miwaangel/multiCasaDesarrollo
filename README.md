@@ -127,6 +127,16 @@ Si la validación de express-validator falla (middleware `validar`), el error tr
 | `DELETE /api/admin/casas/:id/imagenes/:imagenId` | Admin | Borra una imagen; si era la portada, la siguiente toma su lugar |
 | `GET /api/admin/dashboard/rangos-precio` | Admin | Siempre los 5 rangos de precio en orden (con 0 si no hay casas); `total` = número de casas |
 | `GET /api/admin/dashboard/estatus` | Admin | `{ venta, vendida, total }` (siempre las dos, con 0 si no hay) |
+| `GET /api/noticias[?limite=5]` | Público | Noticias activas, la más reciente primero (sin el contenido largo) |
+| `GET /api/noticias/:id` | Público | Noticia completa para "Ver más..." (inactiva o inexistente → 404 `NOTICIA_NO_ENCONTRADA`) |
+| `GET /api/admin/noticias?pagina=&limite=` · `GET /api/admin/noticias/:id` | Admin | Todas (activas e inactivas) |
+| `POST` · `PUT /api/admin/noticias[/:id]` | Admin | JSON o multipart con `imagen` opcional (una). `activa` activa / desactiva; una imagen nueva reemplaza a la anterior |
+| `DELETE /api/admin/noticias/:id` | Admin | Borra la noticia y el archivo de su imagen |
+| `POST /api/visitas` | Público | `{ "pagina": "/buscar" }` → registra la visita (201) o la ignora si se repite en menos de 10 s (200) |
+| `GET /api/visitas/resumen` | Público | `{ visitas, conectados }` (conectados = visitantes distintos de los últimos 5 minutos) |
+
+**Visitas y privacidad:** nunca se guarda la IP. Se guarda `SHA-256(IP + navegador + VISITAS_SALT)`. Pon tu propio `VISITAS_SALT` en `backend/.env`:
+`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 
 - Las imágenes subidas se guardan en `backend/uploads/casas/` (no se suben a git) y se ven en `http://localhost:3000/uploads/casas/<archivo>`. Solo jpg, png o webp de máximo 5 MB (`400 ARCHIVO_INVALIDO` / `400 ARCHIVO_MUY_GRANDE`).
 - Las fotos de los seeders (`/uploads/seed/...`) nunca se borran desde la API, aunque se borre la casa.
