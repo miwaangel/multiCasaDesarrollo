@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button, Container, Form, Modal, Table } from 'react-bootstrap'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import api from '../services/api'
 import { casasMock, noticiasMock } from '../data/mockData'
 
@@ -63,7 +63,7 @@ export default function AdminPanel() {
 
   return (
     <Container fluid="lg" className="admin-page">
-      <div className="admin-heading"><h1>Panel de administrador</h1><div><Button onClick={openCreate}>Nueva casa</Button><Button variant="outline-secondary" onClick={report}>Descargar reporte</Button></div></div>
+      <div className="admin-heading"><h1>Panel de administrador</h1><div><Button onClick={openCreate}>Nueva casa</Button><Button variant="outline-secondary" onClick={report}>Descargar reporte</Button><Link className="btn btn-outline-secondary" to="/admin/dashboard">Dashboard</Link></div></div>
       <h2>Casas</h2>
       <div className="table-responsive"><Table bordered hover>
         <thead><tr><th>Título</th><th>Ciudad</th><th>Precio</th><th>Estatus</th><th>Acciones</th></tr></thead>

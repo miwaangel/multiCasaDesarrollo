@@ -7,6 +7,7 @@ import PropertyDetail from './pages/PropertyDetail'
 import AdminLogin from './pages/AdminLogin'
 import AdminPanel from './pages/AdminPanel'
 import Contact from './pages/Contact'
+import Dashboard from './pages/Dashboard'
 import './App.css'
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/compania" element={<Contact />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/panel" element={<AdminPanel />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="*" element={<section className="page-placeholder"><h1>Página no encontrada</h1></section>} />
         </Routes>
       </main>
