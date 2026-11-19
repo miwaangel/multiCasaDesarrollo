@@ -11,7 +11,7 @@ export default function Company() {
           <p>MultiCasa conecta compradores con viviendas verificadas y asesores inmobiliarios durante todo el proceso.</p>
           <Link className="primary-link" to="/buscar">Buscar una propiedad</Link>
         </div>
-        <img src="/psd-export/diseno-completo.png" alt="Diseño original de bienes raíces" />
+        <img src="/psd-export/diseno-completo.webp" alt="Diseño original de bienes raíces" />
       </section>
 
       <section className="company-content">

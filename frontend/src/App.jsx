@@ -18,10 +18,10 @@ const headerImages = [
   '/images/header-4.svg',
   '/images/header-5.svg',
 ]
+const currentYear = 2026
 
 function App() {
   const [headerImage] = useState(() => headerImages[Math.floor(Math.random() * headerImages.length)])
-  const currentYear = new Date().getFullYear()
 
   return (
     <div className="site-shell">

@@ -16,7 +16,7 @@ export default function AdminPanel() {
   const [noticias, setNoticias] = useState(noticiasMock)
   const [show, setShow] = useState(false)
   const [editing, setEditing] = useState(emptyCasa)
-  const [noticia, setNoticia] = useState({ titulo: '', fecha: new Date().toISOString().slice(0, 10) })
+  const [noticia, setNoticia] = useState({ titulo: '', fecha: '2026-11-18' })
   const token = localStorage.getItem('multicasa_token')
 
   useEffect(() => {

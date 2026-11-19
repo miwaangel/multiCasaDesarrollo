@@ -65,7 +65,7 @@ main { flex: 1; }
 .admin-page table button { margin: 2px; border: 0; background: #315f70; color: #fff; padding: 4px 8px; }
 .admin-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .contact-page { padding: 30px 12px 50px; }
-.contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.contact-layout { display: grid; grid-template-columns: 1fr; gap: 30px; max-width: 760px; }
 .contact-form { display: grid; gap: 10px; max-width: 600px; }
 .contact-form button { background: #a96f31; border: 0; }
 .form-status { padding: 10px; background: #edf5f6; }
