@@ -3,6 +3,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
 import Home from './pages/Home'
 import SearchResults from './pages/SearchResults'
+import PropertyDetail from './pages/PropertyDetail'
 import './App.css'
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/buscar" element={<SearchResults />} />
+          <Route path="/casas/:id" element={<PropertyDetail />} />
           <Route path="/compania" element={<section className="page-placeholder"><h1>La Compañía</h1></section>} />
           <Route path="/contacto" element={<section className="page-placeholder"><h1>Contacto</h1></section>} />
           <Route path="/admin" element={<section className="page-placeholder"><h1>Administración</h1></section>} />
