@@ -4,6 +4,8 @@ const authRoutes = require('./auth.routes');
 const adminRoutes = require('./admin.routes');
 const casaRoutes = require('./casa.routes');
 const catalogoRoutes = require('./catalogo.routes');
+const noticiaRoutes = require('./noticia.routes');
+const visitaRoutes = require('./visita.routes');
 
 /**
  * Router principal montado en /api.
@@ -16,6 +18,8 @@ function apiRoutes() {
   router.use('/health', healthRoutes());
   router.use('/auth', authRoutes());
   router.use('/casas', casaRoutes());
+  router.use('/noticias', noticiaRoutes());
+  router.use('/visitas', visitaRoutes());
   router.use('/', catalogoRoutes()); // /formas-pago y /amenidades
   router.use('/admin', adminRoutes());
   return router;

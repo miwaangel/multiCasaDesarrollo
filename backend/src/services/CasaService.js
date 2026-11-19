@@ -78,7 +78,7 @@ class CasaService {
           { ...campos, ...this.#reglasDeEstatus(campos), creadoPor: adminId },
           { transaction: t },
         );
-        await this.imagenes.agregar(casa.id, archivos.map((a) => urlDeArchivo(a.filename)), t);
+        await this.imagenes.agregar(casa.id, archivos.map((a) => urlDeArchivo('casas', a.filename)), t);
         if (amenidadIds) {
           await this.casas.reemplazarAmenidades(casa, amenidadIds, t);
         }
@@ -112,7 +112,7 @@ class CasaService {
 
       await this.casas.transaccion(async (t) => {
         await casa.update({ ...campos, ...this.#reglasDeEstatus(campos, casa) }, { transaction: t });
-        await this.imagenes.agregar(casa.id, archivos.map((a) => urlDeArchivo(a.filename)), t);
+        await this.imagenes.agregar(casa.id, archivos.map((a) => urlDeArchivo('casas', a.filename)), t);
         if (amenidadIds) {
           await this.casas.reemplazarAmenidades(casa, amenidadIds, t);
         }

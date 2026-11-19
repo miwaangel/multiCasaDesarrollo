@@ -19,6 +19,9 @@ class App {
 
   #middlewares() {
     this.express.disable('x-powered-by');
+    // Si se publica detrás de un proxy (Nginx, Render, Railway...), req.ip toma la IP real
+    // del visitante del header X-Forwarded-For que agrega ese proxy (solo confía en 1 salto).
+    this.express.set('trust proxy', 1);
     this.express.use(cors({ origin: env.corsOrigin }));
     this.express.use(express.json({ limit: '1mb' }));
     this.express.use(express.urlencoded({ extended: true }));
