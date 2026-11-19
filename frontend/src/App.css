@@ -55,6 +55,15 @@ main { flex: 1; }
 .detail-button { width: 100%; border: 0; background: #315f70; color: #fff; text-align: center; padding: 11px; cursor: pointer; }
 .detail-button.interest { background: #a96f31; }
 .detail-map { height: 380px; z-index: 1; }
+.login-page { min-height: 520px; display: grid; place-items: center; padding: 30px 12px; }
+.login-card { width: min(420px, 100%); display: grid; gap: 12px; background: #fff; padding: 28px; border-top: 5px solid #a96f31; }
+.login-card button { margin-top: 8px; background: #315f70; border: 0; }
+.form-error { color: #a12626; }
+.admin-page { padding: 30px 12px 50px; }
+.admin-heading { display: flex; justify-content: space-between; gap: 16px; }
+.admin-heading div { display: flex; gap: 8px; }
+.admin-page table button { margin: 2px; border: 0; background: #315f70; color: #fff; padding: 4px 8px; }
+.admin-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 @keyframes news-scroll { to { transform: translateY(-18px); } }
 .property-slider { height: 360px; margin-bottom: 28px; background: #d7ddd9; }
 .property-slider .carousel-inner, .property-slider .carousel-item { height: 100%; }
@@ -76,6 +85,9 @@ main { flex: 1; }
   .detail-gallery { height: 220px; grid-template-columns: 1fr; }
   .detail-gallery img:not(:first-child) { display: none; }
   .technical-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-heading { flex-direction: column; }
+  .admin-heading div { flex-wrap: wrap; }
+  .admin-form { grid-template-columns: 1fr; }
   .site-header { height: 220px; }
   .header-content { height: 72px; align-items: flex-start; padding-top: 12px; }
   .top-navbar { left: 12px; right: 12px; bottom: -48px; }

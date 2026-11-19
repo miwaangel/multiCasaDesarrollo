@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Home from './pages/Home'
 import SearchResults from './pages/SearchResults'
 import PropertyDetail from './pages/PropertyDetail'
+import AdminLogin from './pages/AdminLogin'
+import AdminPanel from './pages/AdminPanel'
 import './App.css'
 
 function App() {
@@ -44,7 +46,8 @@ function App() {
           <Route path="/casas/:id" element={<PropertyDetail />} />
           <Route path="/compania" element={<section className="page-placeholder"><h1>La Compañía</h1></section>} />
           <Route path="/contacto" element={<section className="page-placeholder"><h1>Contacto</h1></section>} />
-          <Route path="/admin" element={<section className="page-placeholder"><h1>Administración</h1></section>} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/panel" element={<AdminPanel />} />
           <Route path="*" element={<section className="page-placeholder"><h1>Página no encontrada</h1></section>} />
         </Routes>
       </main>
