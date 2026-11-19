@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Container, Form } from 'react-bootstrap'
+import { Container } from 'react-bootstrap'
 import { Link, useSearchParams } from 'react-router-dom'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import api from '../services/api'
@@ -25,7 +25,26 @@ export default function SearchResults() {
     const matchesMax = !searchParams.get('precio_max') || casa.precio <= Number(searchParams.get('precio_max'))
     const matchesRooms = !searchParams.get('recamaras') || casa.recamaras >= Number(searchParams.get('recamaras'))
     const matchesBaths = !searchParams.get('banos') || casa.banos >= Number(searchParams.get('banos'))
-    return matchesLocation && matchesMin && matchesMax && matchesRooms && matchesBaths
+    const radio = Number(searchParams.get('radio') || 0)
+    let matchesRadius = true
+    if (radio && ubicacion) {
+      const referencia = casas.find((item) =>
+        item.ciudad?.toLowerCase().includes(ubicacion)
+        || item.codigo_postal?.includes(ubicacion),
+      )
+      if (referencia?.latitud && referencia?.longitud && casa.latitud && casa.longitud) {
+        const toRadians = (value) => value * Math.PI / 180
+        const earthRadiusKm = 6371
+        const latDistance = toRadians(Number(casa.latitud) - Number(referencia.latitud))
+        const lonDistance = toRadians(Number(casa.longitud) - Number(referencia.longitud))
+        const a = Math.sin(latDistance / 2) ** 2
+          + Math.cos(toRadians(Number(referencia.latitud))) * Math.cos(toRadians(Number(casa.latitud)))
+          * Math.sin(lonDistance / 2) ** 2
+        const distanceKm = 2 * earthRadiusKm * Math.asin(Math.sqrt(a))
+        matchesRadius = distanceKm <= radio
+      }
+    }
+    return matchesLocation && matchesRadius && matchesMin && matchesMax && matchesRooms && matchesBaths
   }), [casas, searchParams])
 
   const center = filtered.some((casa) => casa.latitud && casa.longitud)
