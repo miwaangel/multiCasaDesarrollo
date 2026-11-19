@@ -10,7 +10,15 @@ export default function Dashboard() {
   const [casas, setCasas] = useState(casasMock)
 
   useEffect(() => {
-    if (token) api.get('/dashboard').then(({ data }) => setCasas(data.data?.casas || data.casas || casasMock)).catch(() => {})
+    if (token) {
+      api.get('/dashboard')
+        .then(({ data }) => {
+          const payload = data.data || data
+          if (Array.isArray(payload)) setCasas(payload)
+          else if (Array.isArray(payload?.casas)) setCasas(payload.casas)
+        })
+        .catch(() => {})
+    }
   }, [token])
 
   if (!token) return <Navigate to="/admin" replace />
