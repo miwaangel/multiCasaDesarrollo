@@ -1,6 +1,6 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
 import { Container, Nav, Navbar } from 'react-bootstrap'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Home from './pages/Home'
 import SearchResults from './pages/SearchResults'
 import PropertyDetail from './pages/PropertyDetail'
@@ -8,15 +8,20 @@ import AdminLogin from './pages/AdminLogin'
 import AdminPanel from './pages/AdminPanel'
 import Contact from './pages/Contact'
 import Dashboard from './pages/Dashboard'
+import Company from './pages/Company'
 import './App.css'
 
-function App() {
-  const headerImages = ['/images/header-1.svg', '/images/header-2.svg', '/images/header-3.svg', '/images/header-4.svg', '/images/header-5.svg']
-  const [headerImage, setHeaderImage] = useState(headerImages[0])
+const headerImages = [
+  '/images/header-1.svg',
+  '/images/header-2.svg',
+  '/images/header-3.svg',
+  '/images/header-4.svg',
+  '/images/header-5.svg',
+]
 
-  useEffect(() => {
-    setHeaderImage(headerImages[Math.floor(Math.random() * headerImages.length)])
-  }, [])
+function App() {
+  const [headerImage] = useState(() => headerImages[Math.floor(Math.random() * headerImages.length)])
+  const currentYear = new Date().getFullYear()
 
   return (
     <div className="site-shell">
@@ -47,7 +52,7 @@ function App() {
           <Route path="/buscar" element={<SearchResults />} />
           <Route path="/casas/:id" element={<PropertyDetail />} />
           <Route path="/contacto" element={<Contact />} />
-          <Route path="/compania" element={<Contact />} />
+          <Route path="/compania" element={<Company />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/panel" element={<AdminPanel />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
@@ -66,7 +71,7 @@ function App() {
               <NavLink to="/contacto">Contacto</NavLink>
             </nav>
           </div>
-          <p className="copyright">© {new Date().getFullYear()} MultiCasa</p>
+          <p className="copyright">© {currentYear} MultiCasa</p>
         </Container>
       </footer>
     </div>
