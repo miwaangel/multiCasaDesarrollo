@@ -16,6 +16,19 @@ main { flex: 1; }
 .footer-grid a { color: #fff; }
 .copyright { margin: 20px 0 0; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); text-align: center; }
 .home-page { padding: 24px 12px 50px; }
+.home-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(230px, 1fr); gap: 18px; }
+.search-sidebar { display: flex; flex-direction: column; gap: 14px; }
+.sidebar-block { background: #fff; border: 1px solid #d7d0c0; padding: 14px; }
+.sidebar-block h2 { margin-bottom: 12px; color: #2f5260; font-size: 16px; text-transform: uppercase; }
+.sidebar-block form { display: grid; gap: 8px; }
+.two-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.search-button { background: #a96f31; border: 0; }
+.news-scroll { height: 150px; overflow: hidden; }
+.news-scroll article { display: flex; flex-direction: column; gap: 3px; padding: 8px 0; border-bottom: 1px solid #eee; animation: news-scroll 12s linear infinite alternate; }
+.news-scroll time { color: #777; font-size: 12px; }
+.counters > div { display: flex; justify-content: space-between; padding: 8px 0; }
+.odometer { font-family: 'Courier New', monospace; color: #9b6428; letter-spacing: 2px; }
+@keyframes news-scroll { to { transform: translateY(-18px); } }
 .property-slider { height: 360px; margin-bottom: 28px; background: #d7ddd9; }
 .property-slider .carousel-inner, .property-slider .carousel-item { height: 100%; }
 .property-slider img { width: 100%; height: 360px; object-fit: cover; }
@@ -29,6 +42,7 @@ main { flex: 1; }
 .service-grid article { padding: 20px; background: #fff; border-top: 4px solid #a96f31; }
 .service-grid a { color: #9b6428; font-weight: 700; }
 @media (max-width: 991px) {
+  .home-layout { grid-template-columns: 1fr; }
   .site-header { height: 220px; }
   .header-content { height: 72px; align-items: flex-start; padding-top: 12px; }
   .top-navbar { left: 12px; right: 12px; bottom: -48px; }

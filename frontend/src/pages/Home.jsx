@@ -3,6 +3,7 @@ import { Carousel, Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import api from '../services/api'
 import { casasMock } from '../data/mockData'
+import SearchSidebar from '../components/SearchSidebar'
 
 export default function Home() {
   const [destacadas, setDestacadas] = useState(casasMock.filter((casa) => casa.destacada))
@@ -15,7 +16,9 @@ export default function Home() {
 
   return (
     <Container fluid="lg" className="home-page">
-      <Carousel className="property-slider" interval={4500}>
+      <div className="home-layout">
+        <div>
+          <Carousel className="property-slider" interval={4500}>
         {destacadas.map((casa) => (
           <Carousel.Item key={casa.id}>
             <img src={casa.imagen_principal || '/images/header-1.svg'} alt={casa.titulo} />
@@ -26,7 +29,10 @@ export default function Home() {
             </Carousel.Caption>
           </Carousel.Item>
         ))}
-      </Carousel>
+          </Carousel>
+        </div>
+        <SearchSidebar />
+      </div>
 
       <section className="welcome-section">
         <div>
