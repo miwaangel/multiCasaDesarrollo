@@ -7,18 +7,24 @@ import SearchSidebar from '../components/SearchSidebar'
 
 export default function Home() {
   const [destacadas, setDestacadas] = useState(casasMock.filter((casa) => casa.destacada))
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     api.get('/casas/destacadas')
-      .then(({ data }) => setDestacadas(data.data || data || casasMock.filter((casa) => casa.destacada)))
+      .then(({ data }) => {
+        const casas = data.data || data
+        if (Array.isArray(casas) && casas.length) setDestacadas(casas)
+      })
       .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
   return (
     <Container fluid="lg" className="home-page">
       <div className="home-layout">
         <div>
-          <Carousel className="property-slider" interval={4500}>
+          {loading && <p className="slider-loading" role="status">Cargando propiedades destacadas...</p>}
+          <Carousel className="property-slider" interval={4500} indicators controls aria-label="Propiedades destacadas">
         {destacadas.map((casa) => (
           <Carousel.Item key={casa.id}>
             <img src={casa.imagen_principal || '/images/header-1.svg'} alt={casa.titulo} />
