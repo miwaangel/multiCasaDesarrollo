@@ -1,6 +1,7 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
+import Home from './pages/Home'
 import './App.css'
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/" element={<section className="page-placeholder"><h1>Bienvenido a MultiCasa</h1><p>Catálogo de bienes raíces.</p></section>} />
+          <Route path="/" element={<Home />} />
           <Route path="/buscar" element={<section className="page-placeholder"><h1>Búsqueda de casas</h1></section>} />
           <Route path="/compania" element={<section className="page-placeholder"><h1>La Compañía</h1></section>} />
           <Route path="/contacto" element={<section className="page-placeholder"><h1>Contacto</h1></section>} />
