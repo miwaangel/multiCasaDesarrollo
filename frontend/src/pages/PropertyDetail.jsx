@@ -28,13 +28,19 @@ export default function PropertyDetail() {
     pdf.text(`Banos: ${casa.banos}`, 20, 75)
     pdf.text(`Metros construidos: ${casa.metros_construidos} m2`, 20, 85)
     pdf.text(`Descripcion: ${casa.descripcion}`, 20, 95)
+    pdf.text(`Interior: ${(casa.amenidades?.interiores || []).join(', ')}`, 20, 105)
+    pdf.text(`Exterior: ${(casa.amenidades?.exteriores || []).join(', ')}`, 20, 115)
+    const pagos = (casa.formas_pago || []).map((pago) => pago.nombre).join(', ')
+    pdf.text(`Formas de pago: ${pagos}`, 20, 125)
     pdf.save(`ficha-casa-${casa.id}.pdf`)
   }
 
   return (
     <Container fluid="lg" className="detail-page">
       <div className="detail-gallery">
-        {[1, 2, 3].map((item) => <img key={item} src={casa.imagen_principal || '/images/header-1.svg'} alt={`${casa.titulo} vista ${item}`} />)}
+        {(casa.imagenes?.length ? casa.imagenes : [casa.imagen_principal]).map((imagen, index) => (
+          <img key={`${imagen}-${index}`} src={imagen || '/images/header-1.svg'} alt={`${casa.titulo} vista ${index + 1}`} />
+        ))}
       </div>
       <div className="detail-layout">
         <section>
@@ -50,9 +56,12 @@ export default function PropertyDetail() {
             <div><dt>Construcción</dt><dd>{casa.metros_construidos} m²</dd></div>
             <div><dt>Estatus</dt><dd>{casa.estatus}</dd></div>
           </dl>
-          <div className="amenities"><div><h3>Interior</h3><ul><li>Cocina integral</li><li>Estancia amplia</li><li>Closets</li></ul></div><div><h3>Exterior</h3><ul><li>Jardín</li><li>Cochera</li><li>Área de servicio</li></ul></div></div>
+          <div className="amenities">
+            <div><h3>Interior</h3><ul>{(casa.amenidades?.interiores || []).map((item) => <li key={item}>{item}</li>)}</ul></div>
+            <div><h3>Exterior</h3><ul>{(casa.amenidades?.exteriores || []).map((item) => <li key={item}>{item}</li>)}</ul></div>
+          </div>
           <h2>Formas de pago</h2>
-          <ul><li>Contado</li><li>Crédito bancario</li><li>Financiamiento inmobiliario</li></ul>
+          <ul>{(casa.formas_pago || []).map((pago) => <li key={pago.nombre}><strong>{pago.nombre}:</strong> {pago.requisitos}</li>)}</ul>
         </section>
         <aside className="detail-actions">
           <button type="button" className="detail-button" onClick={descargarPDF}>Descargar ficha en PDF</button>
