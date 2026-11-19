@@ -8,10 +8,20 @@ export default function SearchSidebar() {
   const navigate = useNavigate()
   const [news, setNews] = useState(noticiasMock)
   const [filters, setFilters] = useState({ ubicacion: '', radio: '', precio_min: '', precio_max: '', recamaras: '', banos: '' })
-  const [visitas, setVisitas] = useState(1284)
+  const [visitas] = useState(() => {
+    const saved = Number(sessionStorage.getItem('multicasa_visitas') || 1284)
+    const next = saved + 1
+    sessionStorage.setItem('multicasa_visitas', String(next))
+    return next
+  })
+  const [conectados, setConectados] = useState(24)
 
   useEffect(() => {
     api.get('/noticias').then(({ data }) => setNews(data.data || data || noticiasMock)).catch(() => {})
+    const interval = window.setInterval(() => {
+      setConectados((current) => 20 + ((current * 7) % 17))
+    }, 5000)
+    return () => window.clearInterval(interval)
   }, [])
 
   const update = (event) => setFilters((current) => ({ ...current, [event.target.name]: event.target.value }))
@@ -59,7 +69,7 @@ export default function SearchSidebar() {
 
       <section className="sidebar-block counters">
         <h2>Actividad</h2>
-        <div><span>Conectados</span><strong className="odometer">24</strong></div>
+        <div><span>Conectados</span><strong className="odometer">{conectados}</strong></div>
         <div><span>Visitas</span><strong className="odometer">{visitas.toLocaleString('es-MX')}</strong></div>
       </section>
     </aside>
