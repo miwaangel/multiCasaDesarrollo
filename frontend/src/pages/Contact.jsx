@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useSearchParams } from 'react-router-dom'
 import api from '../services/api'
 
 export default function Contact() {
   const [searchParams] = useSearchParams()
-  const [message, setMessage] = useState({ nombre: '', correo: '', telefono: '', asunto: '', mensaje: '' })
+  const casaId = searchParams.get('casa')
+  const [message, setMessage] = useState({
+    nombre: '',
+    correo: '',
+    telefono: '',
+    asunto: searchParams.get('asunto') || (casaId ? `Casa de interés ${casaId}` : ''),
+    mensaje: casaId ? `Estoy interesado en la casa con ID ${casaId}.` : '',
+  })
   const [status, setStatus] = useState('')
 
-  useEffect(() => {
-    setMessage((current) => ({
-      ...current,
-      asunto: searchParams.get('asunto') || (searchParams.get('casa') ? `Casa de interés ${searchParams.get('casa')}` : ''),
-      mensaje: searchParams.get('casa') ? `Estoy interesado en la casa con ID ${searchParams.get('casa')}.` : '',
-    }))
-  }, [searchParams])
 
   const submit = async (event) => {
     event.preventDefault()
@@ -43,14 +43,6 @@ export default function Contact() {
             <Form.Control required as="textarea" rows={5} placeholder="Mensaje" value={message.mensaje} onChange={(event) => setMessage({ ...message, mensaje: event.target.value })} />
             <Button type="submit">Enviar mensaje</Button>
           </Form>
-        </section>
-        <section className="company-video">
-          <h2>La Compañía</h2>
-          <video controls poster="/images/header-5.svg" preload="metadata">
-            <source src="/video/multicasa.mp4" type="video/mp4" />
-            Tu navegador no admite video HTML5.
-          </video>
-          <p>Conoce el objetivo de MultiCasa y cómo encontraremos tu próximo hogar.</p>
         </section>
       </div>
     </Container>
