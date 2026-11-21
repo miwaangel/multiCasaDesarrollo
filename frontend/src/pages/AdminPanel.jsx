@@ -17,6 +17,7 @@ export default function AdminPanel() {
   const [show, setShow] = useState(false)
   const [editing, setEditing] = useState(emptyCasa)
   const [noticia, setNoticia] = useState({ titulo: '', fecha: '2026-11-18' })
+  const [descargando, setDescargando] = useState('')
   const token = localStorage.getItem('multicasa_token')
 
   useEffect(() => {
@@ -82,15 +83,24 @@ export default function AdminPanel() {
     setCasas((current) => current.map((item) => item.id === casa.id ? payload : item))
   }
 
-  const report = () => {
-    const rows = [['ID', 'Titulo', 'Ciudad', 'Precio', 'Estatus'], ...casas.map((casa) => [casa.id, casa.titulo, casa.ciudad, casa.precio, casa.estatus])]
-    const csv = rows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n')
-    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'reporte-casas.csv'
-    link.click()
-    URL.revokeObjectURL(url)
+  // Reporte de todas las casas generado por el backend (GET /api/admin/reportes/casas).
+  // Lleva el token, así que se pide con axios como blob y se descarga desde el navegador.
+  const report = async (formato) => {
+    setDescargando(formato)
+    try {
+      const respuesta = await api.get('/admin/reportes/casas', { params: { formato }, responseType: 'blob' })
+      const nombre = respuesta.headers['content-disposition']?.match(/filename="(.+)"/)?.[1] || `reporte-casas.${formato}`
+      const url = URL.createObjectURL(respuesta.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = nombre
+      link.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      window.alert(`No se pudo generar el reporte: ${error.message}`)
+    } finally {
+      setDescargando('')
+    }
   }
 
   const guardarNoticia = (event) => {
@@ -107,7 +117,7 @@ export default function AdminPanel() {
 
   return (
     <Container fluid="lg" className="admin-page">
-      <div className="admin-heading"><h1>Panel de administrador</h1><div><Button onClick={openCreate}>Nueva casa</Button><Button variant="outline-secondary" onClick={report}>Descargar reporte</Button><Link className="btn btn-outline-secondary" to="/admin/dashboard">Dashboard</Link><Button variant="danger" onClick={logout}>Cerrar sesión</Button></div></div>
+      <div className="admin-heading"><h1>Panel de administrador</h1><div><Button onClick={openCreate}>Nueva casa</Button><Button variant="outline-secondary" disabled={Boolean(descargando)} onClick={() => report('pdf')}>{descargando === 'pdf' ? 'Generando...' : 'Reporte PDF'}</Button><Button variant="outline-secondary" disabled={Boolean(descargando)} onClick={() => report('xlsx')}>{descargando === 'xlsx' ? 'Generando...' : 'Reporte Excel'}</Button><Link className="btn btn-outline-secondary" to="/admin/dashboard">Dashboard</Link><Button variant="danger" onClick={logout}>Cerrar sesión</Button></div></div>
       <h2>Casas</h2>
       <div className="table-responsive"><Table bordered hover>
         <thead><tr><th>Título</th><th>Ciudad</th><th>Precio</th><th>Estatus</th><th>Acciones</th></tr></thead>
