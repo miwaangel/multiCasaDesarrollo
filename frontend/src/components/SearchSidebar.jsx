@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap'
 import { noticiasMock } from '../data/mockData'
 import api from '../services/api'
 
+// Mismos nombres que GET /api/casas/buscar (contrato de la API, sección 2.6)
+const FILTROS = ['ubicacion', 'radioKm', 'precioMin', 'precioMax', 'recamaras', 'banos']
+
 export default function SearchSidebar() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [news, setNews] = useState(noticiasMock)
-  const [filters, setFilters] = useState({ ubicacion: '', radio: '', precio_min: '', precio_max: '', recamaras: '', banos: '' })
+  // En /buscar el formulario muestra los filtros con los que se hizo la búsqueda
+  const [filters, setFilters] = useState(() =>
+    Object.fromEntries(FILTROS.map((nombre) => [nombre, searchParams.get(nombre) || ''])))
   const [visitas] = useState(() => {
     const saved = Number(sessionStorage.getItem('multicasa_visitas') || 1284)
     const next = saved + 1
@@ -41,14 +47,14 @@ export default function SearchSidebar() {
         <h2>Encuentra tu futura propiedad</h2>
         <Form onSubmit={submit}>
           <Form.Control name="ubicacion" value={filters.ubicacion} onChange={update} placeholder="C.P. o ciudad" aria-label="Ciudad o código postal" />
-          <Form.Select name="radio" value={filters.radio} onChange={update} aria-label="Radio de búsqueda">
+          <Form.Select name="radioKm" value={filters.radioKm} onChange={update} aria-label="Radio de búsqueda">
             <option value="">Sin rango</option><option value="2">2 km</option><option value="5">5 km</option><option value="10">10 km</option><option value="20">20 km</option>
           </Form.Select>
           <div className="two-fields">
-            <Form.Select name="precio_min" value={filters.precio_min} onChange={update} aria-label="Precio mínimo">
+            <Form.Select name="precioMin" value={filters.precioMin} onChange={update} aria-label="Precio mínimo">
               <option value="">Precio desde</option><option value="1000000">$1,000,000</option><option value="2000000">$2,000,000</option><option value="3000000">$3,000,000</option><option value="5000000">$5,000,000</option>
             </Form.Select>
-            <Form.Select name="precio_max" value={filters.precio_max} onChange={update} aria-label="Precio máximo">
+            <Form.Select name="precioMax" value={filters.precioMax} onChange={update} aria-label="Precio máximo">
               <option value="">Precio hasta</option><option value="2000000">$2,000,000</option><option value="3000000">$3,000,000</option><option value="5000000">$5,000,000</option><option value="10000000">$10,000,000</option>
             </Form.Select>
           </div>

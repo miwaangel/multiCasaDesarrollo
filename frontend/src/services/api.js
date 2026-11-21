@@ -26,4 +26,16 @@ api.interceptors.response.use(
   },
 )
 
+/**
+ * La API regresa rutas de imagen relativas ("/uploads/seed/casa-01-1.jpg").
+ * Se sirven desde el servidor del backend, no desde Vite: se les antepone su origen.
+ */
+const API_ORIGIN = new URL(api.defaults.baseURL).origin
+
+export function urlArchivo(ruta) {
+  if (!ruta) return ''
+  if (/^https?:\/\//.test(ruta)) return ruta
+  return `${API_ORIGIN}${ruta}`
+}
+
 export default api
