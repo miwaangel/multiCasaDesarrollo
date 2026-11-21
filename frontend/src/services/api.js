@@ -41,4 +41,9 @@ export function urlArchivo(ruta) {
   return `${API_ORIGIN}${ruta}`
 }
 
+/** URL completa de un endpoint, para links directos (por ejemplo descargar un PDF). */
+export function urlApi(ruta) {
+  return `${api.defaults.baseURL}${ruta}`
+}
+
 export default api

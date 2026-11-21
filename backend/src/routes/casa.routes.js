@@ -59,12 +59,32 @@ const { reglasBusqueda } = require('../validators/busqueda.validators');
  *           "formasPago": [ { "id": 1, "nombre": "Contado", "descripcion": "...", "requisitos": "..." } ] } }
  *       404:
  *         description: CASA_NO_ENCONTRADA (no existe o ya está vendida)
+ *
+ * /api/casas/{id}/pdf:
+ *   get:
+ *     tags: [Casas (público)]
+ *     summary: Ficha técnica en PDF de una casa en venta
+ *     description: >
+ *       Encabezado con logo, foto de portada, características, descripción, amenidades
+ *       (interiores / exteriores), formas de pago con requisitos y ubicación.
+ *     parameters:
+ *       - { in: path, name: id, required: true, schema: { type: integer }, example: 1 }
+ *       - { in: query, name: descargar, schema: { type: integer, enum: [1] }, description: 'Con 1 se descarga como archivo; sin él se abre en el navegador' }
+ *     responses:
+ *       200:
+ *         description: Archivo PDF (ficha-casa-{id}.pdf)
+ *         content:
+ *           application/pdf:
+ *             schema: { type: string, format: binary }
+ *       404:
+ *         description: CASA_NO_ENCONTRADA (no existe o ya está vendida)
  */
 function casaRoutes(controller = new CasaController()) {
   const router = Router();
   router.get('/destacadas', asyncHandler(controller.destacadas));
   router.get('/buscar', validar(reglasBusqueda), asyncHandler(controller.buscar)); // antes de /:id
   router.get('/:id', validar(reglaId), asyncHandler(controller.detalle));
+  router.get('/:id/pdf', validar(reglaId), asyncHandler(controller.pdf));
   return router;
 }
 
