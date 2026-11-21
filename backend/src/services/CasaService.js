@@ -4,6 +4,7 @@ const CasaRepository = require('../repositories/CasaRepository');
 const ImagenCasaRepository = require('../repositories/ImagenCasaRepository');
 const AmenidadRepository = require('../repositories/AmenidadRepository');
 const FormaPagoRepository = require('../repositories/FormaPagoRepository');
+const GeocodingService = require('./GeocodingService');
 
 const casaNoEncontrada = () => AppError.notFound('La casa no existe', 'CASA_NO_ENCONTRADA');
 
@@ -25,11 +26,13 @@ class CasaService {
     imagenRepository = new ImagenCasaRepository(),
     amenidadRepository = new AmenidadRepository(),
     formaPagoRepository = new FormaPagoRepository(),
+    geocodingService = null,
   } = {}) {
     this.casas = casaRepository;
     this.imagenes = imagenRepository;
     this.amenidades = amenidadRepository;
     this.formasPago = formaPagoRepository;
+    this.geocoding = geocodingService ?? new GeocodingService({ casaRepository });
   }
 
   // ------------------------------------------------------------------ sitio público
@@ -37,6 +40,37 @@ class CasaService {
   async listarDestacadas() {
     const casas = await this.casas.findDestacadas();
     return casas.map((casa) => this.#tarjeta(casa, { publica: true }));
+  }
+
+  /**
+   * Búsqueda del formulario "Encuentra tu futura propiedad" (issue #13).
+   * - ubicacion + radioKm: C.P. / ciudad → coordenadas (GeocodingService) → casas dentro del radio.
+   * - ubicacion sin radio ("Sin rango"): solo las casas de ese C.P. o de esa ciudad.
+   * - sin ubicacion: todas las casas en venta que cumplan los demás filtros.
+   * Regresa { casas, centro }; centro sirve para centrar el mapa (null si no se geocodificó).
+   */
+  async buscar({ ubicacion, radioKm, ...filtros } = {}) {
+    let centro = null;
+    const criterios = { ...filtros };
+
+    if (ubicacion && radioKm) {
+      centro = await this.geocoding.geocodificar(ubicacion);
+      if (!centro) {
+        throw AppError.notFound(
+          `No encontramos "${ubicacion}". Revisa el C.P. (5 dígitos) o el nombre de la ciudad.`,
+          'UBICACION_NO_ENCONTRADA',
+        );
+      }
+      Object.assign(criterios, { centro, radioKm });
+    } else if (ubicacion) {
+      criterios[/^\d{5}$/.test(ubicacion) ? 'codigoPostal' : 'ciudad'] = ubicacion;
+    }
+
+    const casas = await this.casas.buscar(criterios);
+    return {
+      casas: casas.map((casa) => this.#tarjeta(casa, { publica: true })),
+      centro: centro && { ...centro, radioKm },
+    };
   }
 
   async obtenerPublica(id) {

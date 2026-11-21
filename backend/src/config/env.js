@@ -40,6 +40,17 @@ const env = Object.freeze({
     expiresIn: process.env.JWT_EXPIRES_IN || '8h',
   }),
 
+  // Búsqueda por radio: C.P. / ciudad → coordenadas (issue #13).
+  // En pruebas se apaga para no depender de internet.
+  geocoding: Object.freeze({
+    habilitado: process.env.GEOCODING_HABILITADO
+      ? process.env.GEOCODING_HABILITADO === 'true'
+      : nodeEnv !== 'test',
+    url: process.env.GEOCODING_URL || 'https://nominatim.openstreetmap.org',
+    userAgent: process.env.GEOCODING_USER_AGENT || 'MultiCasa/1.0 (proyecto escolar)',
+    timeoutMs: Number(process.env.GEOCODING_TIMEOUT_MS) || 5000,
+  }),
+
   mail: Object.freeze({
     host: process.env.MAIL_HOST || '',
     port: Number(process.env.MAIL_PORT) || 587,
