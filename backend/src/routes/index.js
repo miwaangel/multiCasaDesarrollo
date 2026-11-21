@@ -6,6 +6,7 @@ const casaRoutes = require('./casa.routes');
 const catalogoRoutes = require('./catalogo.routes');
 const noticiaRoutes = require('./noticia.routes');
 const visitaRoutes = require('./visita.routes');
+const contactoRoutes = require('./contacto.routes');
 
 /**
  * Router principal montado en /api.
@@ -20,6 +21,7 @@ function apiRoutes() {
   router.use('/casas', casaRoutes());
   router.use('/noticias', noticiaRoutes());
   router.use('/visitas', visitaRoutes());
+  router.use('/contacto', contactoRoutes());
   router.use('/', catalogoRoutes()); // /formas-pago y /amenidades
   router.use('/admin', adminRoutes());
   return router;
