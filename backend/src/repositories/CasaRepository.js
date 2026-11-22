@@ -117,6 +117,25 @@ class CasaRepository extends BaseRepository {
     return this.findAll({ attributes, where, include: [INCLUDE_PORTADA], order });
   }
 
+  /**
+   * Todas las casas para el reporte del admin (issue #17), sin imágenes ni relaciones.
+   * Primero las que siguen en venta, después las vendidas; dentro de cada grupo por id.
+   */
+  findParaReporte({ estatus } = {}) {
+    return this.findAll({
+      attributes: [
+        'id', 'titulo', 'tipo', 'colonia', 'ciudad', 'estado', 'codigoPostal', 'precio', 'recamaras',
+        'banos', 'm2Terreno', 'm2Construccion', 'estatus', 'destacada', 'fechaVenta', 'creadoEn',
+      ],
+      where: estatus ? { estatus } : {},
+      order: [
+        ['estatus', 'ASC'], // ENUM('venta', 'vendida'): MySQL ordena por la posición en el ENUM
+        ['id', 'ASC'],
+      ],
+      raw: true,
+    });
+  }
+
   /** Centro (promedio de lat / lng) de las casas con ese C.P. null si no hay ninguna. */
   findCentroPorCodigoPostal(codigoPostal) {
     return this.#centro({ codigoPostal });

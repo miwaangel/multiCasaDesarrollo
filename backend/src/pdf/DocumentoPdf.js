@@ -51,6 +51,15 @@ class DocumentoPdf {
     return this.doc.page.margins.left;
   }
 
+  /** Recorta el texto con "…" para que quepa en una línea de `ancho` puntos (con la fuente actual). */
+  #recortar(texto, ancho) {
+    const { doc } = this;
+    let t = String(texto ?? '');
+    if (doc.widthOfString(t) <= ancho) return t;
+    while (t.length > 1 && doc.widthOfString(`${t}…`) > ancho) t = t.slice(0, -1);
+    return `${t.trimEnd()}…`;
+  }
+
   /** Agrega una página si lo que sigue (alto en puntos) ya no cabe. */
   #asegurarEspacio(alto) {
     if (this.doc.y + alto > this.doc.page.height - this.doc.page.margins.bottom) {
@@ -185,7 +194,8 @@ class DocumentoPdf {
       const x = this.#izquierda + columna * anchoCelda + 8;
       const y = doc.y;
       doc.font('Helvetica').fontSize(8).fillColor(COLORES.suave).text(etiqueta.toUpperCase(), x, y + 4, { width: anchoCelda - 16 });
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(COLORES.texto).text(String(valor ?? '—'), x, y + 15, { width: anchoCelda - 16, lineBreak: false, ellipsis: true });
+      doc.font('Helvetica-Bold').fontSize(10).fillColor(COLORES.texto);
+      doc.text(this.#recortar(valor ?? '—', anchoCelda - 16), x, y + 15, { width: anchoCelda - 16, lineBreak: false });
       doc.y = y;
       if (columna === columnas - 1 || i === pares.length - 1) {
         doc.y = y + altoFila;
@@ -257,9 +267,9 @@ class DocumentoPdf {
       if (fondo) doc.rect(this.#izquierda, y, this.#ancho, altoFila).fill(fondo);
       let x = this.#izquierda;
       valores.forEach((valor, i) => {
-        doc.font(encabezado ? 'Helvetica-Bold' : 'Helvetica').fontSize(encabezado ? 8 : 9)
-          .fillColor(encabezado ? '#ffffff' : COLORES.texto)
-          .text(String(valor ?? ''), x + 5, y + 6, { width: anchos[i] - 10, align: columnas[i].alinear ?? 'left', lineBreak: false, ellipsis: true });
+        doc.font(encabezado ? 'Helvetica-Bold' : 'Helvetica').fontSize(encabezado ? 7.5 : 9)
+          .fillColor(encabezado ? '#ffffff' : COLORES.texto);
+        doc.text(this.#recortar(valor, anchos[i] - 10), x + 5, y + 6, { width: anchos[i] - 10, align: columnas[i].alinear ?? 'left', lineBreak: false });
         x += anchos[i];
       });
       doc.y = y + altoFila;

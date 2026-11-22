@@ -5,7 +5,7 @@ import api from '../services/api'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
-  const [credentials, setCredentials] = useState({ correo: '', password: '' })
+  const [credentials, setCredentials] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
 
   const submit = async (event) => {
@@ -29,7 +29,7 @@ export default function AdminLogin() {
         {error && <p className="form-error">{error}</p>}
         <Form.Group>
           <Form.Label>Correo</Form.Label>
-          <Form.Control type="email" required value={credentials.correo} onChange={(event) => setCredentials({ ...credentials, correo: event.target.value })} />
+          <Form.Control type="email" required value={credentials.email} onChange={(event) => setCredentials({ ...credentials, email: event.target.value })} />
         </Form.Group>
         <Form.Group>
           <Form.Label>Contraseña</Form.Label>

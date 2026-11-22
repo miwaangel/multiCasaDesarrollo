@@ -5,6 +5,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const adminCasaRoutes = require('./adminCasa.routes');
 const dashboardRoutes = require('./dashboard.routes');
 const adminNoticiaRoutes = require('./adminNoticia.routes');
+const reporteRoutes = require('./reporte.routes');
 
 /**
  * Router del sitio privado, montado en /api/admin.
@@ -42,6 +43,7 @@ function adminRoutes({ authController = new AuthController(), auth = authMiddlew
   router.use('/casas', adminCasaRoutes());
   router.use('/dashboard', dashboardRoutes());
   router.use('/noticias', adminNoticiaRoutes());
+  router.use('/reportes', reporteRoutes());
 
   return router;
 }

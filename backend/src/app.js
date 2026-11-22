@@ -22,7 +22,8 @@ class App {
     // Si se publica detrás de un proxy (Nginx, Render, Railway...), req.ip toma la IP real
     // del visitante del header X-Forwarded-For que agrega ese proxy (solo confía en 1 salto).
     this.express.set('trust proxy', 1);
-    this.express.use(cors({ origin: env.corsOrigin }));
+    // exposedHeaders: el front lee el nombre del archivo de los reportes (Content-Disposition)
+    this.express.use(cors({ origin: env.corsOrigin, exposedHeaders: ['Content-Disposition'] }));
     this.express.use(express.json({ limit: '1mb' }));
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use('/uploads', express.static(env.uploadsDir));
