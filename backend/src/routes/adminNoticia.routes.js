@@ -47,7 +47,7 @@ const { reglaId, reglasCrear, reglasActualizar, reglasListaAdmin } = require('..
  *           schema: { $ref: '#/components/schemas/NoticiaEntrada' }
  *     responses:
  *       201: { description: '{ "data": { "id": 4, "titulo": "...", "imagenUrl": "/uploads/noticias/noticia-...jpg", "creadoPor": 1, ... } }' }
- *       400: { description: DATOS_INVALIDOS, ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE }
+ *       400: { description: 'DATOS_INVALIDOS, ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE' }
  *
  * /api/admin/noticias/{id}:
  *   get:
@@ -72,7 +72,7 @@ const { reglaId, reglasCrear, reglasActualizar, reglasListaAdmin } = require('..
  *           schema: { $ref: '#/components/schemas/NoticiaEntrada' }
  *     responses:
  *       200: { description: '{ "data": { ...noticia actualizada } }' }
- *       400: { description: DATOS_INVALIDOS, ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE }
+ *       400: { description: 'DATOS_INVALIDOS, ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE' }
  *       404: { description: NOTICIA_NO_ENCONTRADA }
  *   delete:
  *     tags: [Noticias (admin)]
