@@ -68,7 +68,7 @@ export default function Home() {
           <div className="welcome-collage" aria-label="Propiedades destacadas">
             {casas.slice(0, 4).map((casa) => (
               <Link key={casa.id} to={`/casas/${casa.id}`}>
-                <img src={urlArchivo(casa.portada) || '/images/header-1.svg'} alt={casa.titulo} />
+                <img src={urlArchivo(casa.portada) || '/images/header-1.svg'} alt={casa.titulo} loading="lazy" decoding="async" />
               </Link>
             ))}
           </div>

@@ -12,7 +12,8 @@
     "db:undo": "sequelize-cli db:migrate:undo",
     "db:undo:all": "sequelize-cli db:migrate:undo:all",
     "db:seed": "sequelize-cli db:seed:all",
-    "db:reset": "sequelize-cli db:seed:undo:all && sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate && sequelize-cli db:seed:all"
+    "db:reset": "sequelize-cli db:seed:undo:all && sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate && sequelize-cli db:seed:all",
+    "optimizar:seed": "node scripts/optimizar-seed.js"
   },
   "author": "Equipo MultiCasa",
   "license": "UNLICENSED",
@@ -29,6 +30,7 @@
     "nodemailer": "^7.0.13",
     "pdfkit": "^0.17.2",
     "sequelize": "^6.37.8",
+    "sharp": "^0.34.5",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
   },

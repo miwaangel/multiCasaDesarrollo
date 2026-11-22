@@ -61,7 +61,7 @@ export default function Servicios() {
     >
       {SERVICIOS.map((s, i) => (
         <section key={s.id} id={s.id} className={`info-servicio${i % 2 ? ' invertido' : ''}`}>
-          <img src={urlArchivo(s.foto)} alt="" />
+          <img src={urlArchivo(s.foto)} alt="" loading="lazy" decoding="async" />
           <div>
             <h2>{s.titulo}</h2>
             <p>{s.texto}</p>

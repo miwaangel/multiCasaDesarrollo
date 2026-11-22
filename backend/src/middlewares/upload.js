@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 const AppError = require('../utils/AppError');
 const { dirDe, eliminarArchivos } = require('../utils/archivos');
+const { optimizarImagen } = require('../utils/optimizarImagen');
 
 const MAX_BYTES = 5 * 1024 * 1024; // 5 MB por archivo
 const TIPOS_PERMITIDOS = {
@@ -31,6 +32,8 @@ function fileFilter(req, file, cb) {
  * Deja los archivos en req.files (siempre un arreglo) y los demás campos en req.body.
  *   tipo no permitido o demasiados archivos → 400 ARCHIVO_INVALIDO
  *   más de 5 MB                             → 400 ARCHIVO_MUY_GRANDE
+ * Cada imagen se optimiza al llegar (utils/optimizarImagen): máximo 1600 px, JPEG comprimido y sin
+ * metadatos. Si el contenido no es una imagen real (aunque la extensión lo sea) → 400 ARCHIVO_INVALIDO.
  * Si la petición termina en error (por ejemplo, la validación de campos falla),
  * los archivos que se alcanzaron a guardar se borran del disco.
  */
@@ -72,11 +75,19 @@ function crearSubida({ carpeta, prefijo, campo, maxArchivos }) {
         }
       });
 
-      if (!err) {
-        req.files = req.files || [];
-        return next();
+      if (err) {
+        return next(err instanceof multer.MulterError ? traducirErrorMulter(err) : err);
       }
-      return next(err instanceof multer.MulterError ? traducirErrorMulter(err) : err);
+      req.files = req.files || [];
+      return Promise.all(
+        req.files.map(async (archivo) => {
+          try {
+            Object.assign(archivo, await optimizarImagen(archivo));
+          } catch {
+            throw new AppError(400, 'ARCHIVO_INVALIDO', `"${archivo.originalname}" no es una imagen válida o está dañada`);
+          }
+        }),
+      ).then(() => next(), next);
     });
   };
 }

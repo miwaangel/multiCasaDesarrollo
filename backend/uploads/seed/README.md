@@ -16,6 +16,14 @@ La API las sirve en `/uploads/seed/casa-XX-N.jpg`, que es la `url` guardada en `
 
 ## Para reemplazar una foto
 
-Guarda la nueva imagen con el **mismo nombre** (JPG, máximo ~1280 px por lado para que la página cargue rápido). No hace falta volver a correr los seeders.
+Guarda la nueva imagen con el **mismo nombre** (JPG) y corre:
+
+```bash
+npm run optimizar:seed
+```
+
+El script deja cada foto en máximo 1280 px por lado, JPEG progresivo calidad 72 y sin metadatos (solo la reemplaza si queda más ligera). No hace falta volver a correr los seeders.
+
+Las fotos que suben los administradores se optimizan solas al subirlas (`src/utils/optimizarImagen.js`: máximo 1600 px, JPEG calidad 80).
 
 Las fotos son de [Unsplash](https://unsplash.com) (licencia libre). Las de los terrenos (`casa-08-*` y `casa-12-*`) son recortes de jardines; conviene cambiarlas por fotos de lotes reales cuando se tengan.

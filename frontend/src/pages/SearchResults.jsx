@@ -58,7 +58,7 @@ export default function SearchResults() {
           <div className="property-results">
             {casas.map((casa) => (
               <article className="property-card" key={casa.id}>
-                <img src={urlArchivo(casa.portada) || '/images/header-1.svg'} alt={casa.titulo} />
+                <img src={urlArchivo(casa.portada) || '/images/header-1.svg'} alt={casa.titulo} loading="lazy" decoding="async" />
                 <div>
                   <h2>{casa.titulo}</h2>
                   <p>

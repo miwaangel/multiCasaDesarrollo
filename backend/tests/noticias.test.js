@@ -161,7 +161,7 @@ describe('Admin', () => {
     expect(res.status).toBe(200);
     expect(res.body.data.resumen).toBe('Resumen actualizado');
     expect(res.body.data.titulo).toBe('Nuevo fraccionamiento en Ramos Arizpe'); // no se envió: no cambia
-    expect(res.body.data.imagenUrl).toMatch(/\.png$/);
+    expect(res.body.data.imagenUrl).toMatch(/\.jpg$/); // se subió PNG: el servidor la optimiza a JPEG
     expect(fs.existsSync(archivoDeUrl(res.body.data.imagenUrl))).toBe(true);
     expect(fs.existsSync(archivoDeUrl(imagenUrl))).toBe(false);
     imagenUrl = res.body.data.imagenUrl;

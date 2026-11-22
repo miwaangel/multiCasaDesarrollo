@@ -10,10 +10,22 @@ const VALORES = [
   ['Compromiso local', 'Conocemos las colonias de Saltillo, Ramos Arizpe y Monterrey: servicios, escuelas, vialidades y plusvalía.'],
 ]
 
-/** La Compañía: quiénes somos, misión, visión, valores, cifras del catálogo y video (issue #16). */
+// Texto del audio (también sirve como guion para grabarlo y para quien no pueda escucharlo)
+const TRANSCRIPCION = [
+  'Hola, te saluda el equipo de Bienes Raíces MultiCasa. Antes de comprar tu casa, toma en cuenta estos cinco consejos.',
+  'Uno: calcula tu presupuesto completo. Además del precio, considera el enganche, el avalúo y los gastos de escrituración, que suelen ser entre el cinco y el ocho por ciento del valor.',
+  'Dos: visita la casa a distintas horas. De día y de noche, entre semana y en fin de semana, para conocer el tráfico, el ruido y la iluminación.',
+  'Tres: revisa los servicios. Abre las llaves, prende la luz en cada cuarto y busca manchas de humedad en techos y muros.',
+  'Cuatro: pide los documentos. Escrituras, predial y agua al corriente, y el certificado de libertad de gravamen.',
+  'Cinco: compara con calma. En multicasa punto com puedes buscar por código postal, ver cada casa en el mapa y descargar su ficha técnica en PDF.',
+  'Si tienes dudas, escríbenos desde la página de contacto. Con gusto te asesoramos.',
+]
+
+/** La Compañía: quiénes somos, misión, visión, valores, cifras del catálogo, audio con consejos y video (issue #16). */
 export default function Company() {
   const [cifras, setCifras] = useState(null)
   const [hayVideo, setHayVideo] = useState(true)
+  const [hayAudio, setHayAudio] = useState(true)
 
   // Cifras reales del catálogo (casas en venta y ciudades)
   useEffect(() => {
@@ -81,6 +93,23 @@ export default function Company() {
         ) : (
           <p className="info-aviso">El video de presentación estará disponible muy pronto.</p>
         )}
+      </section>
+
+      <section className="info-seccion info-audio" id="audio">
+        <h2>Escucha: 5 consejos antes de comprar tu casa</h2>
+        <p>Un mensaje de nuestro equipo de asesores (1 minuto). También puedes leerlo abajo.</p>
+        {hayAudio ? (
+          <audio controls preload="metadata" onError={() => setHayAudio(false)}>
+            <source src="/audio/consejos.mp3" type="audio/mpeg" onError={() => setHayAudio(false)} />
+            Tu navegador no admite audio HTML5.
+          </audio>
+        ) : (
+          <p className="info-aviso">El audio estará disponible muy pronto.</p>
+        )}
+        <details>
+          <summary>Leer la transcripción</summary>
+          {TRANSCRIPCION.map((parrafo) => <p key={parrafo.slice(0, 20)}>{parrafo}</p>)}
+        </details>
       </section>
 
       <section className="info-cta">
