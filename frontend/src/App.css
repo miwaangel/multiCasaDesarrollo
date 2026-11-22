@@ -139,3 +139,31 @@ main { flex: 1; }
   .footer-grid nav { display: grid; grid-template-columns: 1fr 1fr; }
   input, select, textarea, button { min-height: 42px; }
 }
+
+/* Panel de administrador (#29) */
+.admin-tabla img { width: 72px; height: 48px; object-fit: cover; }
+.admin-tabla tr.vendida td { background: #f6ead9; }
+.admin-page table button.peligro { background: #9b3d2f; }
+.admin-badge { margin-left: 6px; padding: 1px 6px; background: #b87932; color: #fff; font-size: 0.75em; border-radius: 3px; }
+.admin-filtros { display: grid; grid-template-columns: 1fr 180px; gap: 8px; max-width: 600px; margin: 8px 0 12px; }
+.admin-paginacion { display: flex; align-items: center; gap: 12px; margin: 8px 0 24px; }
+.admin-cerrar { border: 0; background: none; font-size: 1.2em; line-height: 1; float: right; }
+.admin-subtitle { font-size: 1.05rem; color: #1f5d70; margin: 18px 0 8px; border-bottom: 1px solid #ddd4c3; padding-bottom: 4px; }
+.admin-form .span-2 { grid-column: span 2; }
+.admin-form-4 { grid-template-columns: repeat(4, 1fr); }
+.admin-check-destacada { align-self: end; }
+.admin-ayuda { margin: 8px 0 4px; color: #66767c; font-size: 0.9em; }
+.admin-map { height: 260px; border: 1px solid #ddd4c3; }
+.admin-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 2px 12px; margin-top: 4px; }
+.admin-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.admin-thumbs figure { margin: 0; width: 130px; }
+.admin-thumbs img { width: 130px; height: 90px; object-fit: cover; display: block; }
+.admin-thumbs figcaption { display: flex; justify-content: space-between; font-size: 0.8em; padding-top: 2px; }
+.admin-thumbs button { border: 0; background: #9b3d2f; color: #fff; padding: 0 6px; }
+.admin-noticia-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; max-width: 900px; margin: 12px 0; }
+.admin-noticia-form .span-2 { grid-column: span 2; }
+
+@media (max-width: 768px) {
+  .admin-form .span-2, .admin-noticia-form .span-2 { grid-column: auto; }
+  .admin-form-4, .admin-noticia-form, .admin-filtros { grid-template-columns: 1fr; }
+}

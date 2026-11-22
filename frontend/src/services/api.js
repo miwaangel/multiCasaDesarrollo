@@ -19,6 +19,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Token vencido o inválido en una ruta de admin: cerrar sesión y volver al login
+    if (error.response?.status === 401 && error.config?.url?.startsWith('/admin') && localStorage.getItem('multicasa_token')) {
+      localStorage.removeItem('multicasa_token')
+      window.location.assign('/admin')
+    }
     const message = error.response?.data?.error?.mensaje
       || error.response?.data?.mensaje
       || 'No fue posible completar la solicitud'
