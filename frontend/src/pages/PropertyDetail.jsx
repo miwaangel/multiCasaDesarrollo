@@ -42,7 +42,7 @@ export default function PropertyDetail() {
     <Container fluid="lg" className="detail-page">
       <div className="detail-gallery">
         {imagenes.map((imagen, index) => (
-          <img key={imagen.id} src={urlArchivo(imagen.url) || '/images/header-1.svg'} alt={`${casa.titulo} vista ${index + 1}`} />
+          <img key={imagen.id} src={urlArchivo(imagen.url) || '/images/header-1.svg'} alt={`${casa.titulo} vista ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
         ))}
       </div>
       <div className="detail-layout">

@@ -127,7 +127,7 @@ export default function AdminPanel() {
           <tbody>
             {listado.casas.map((casa) => (
               <tr key={casa.id} className={casa.estatus === 'vendida' ? 'vendida' : undefined}>
-                <td>{casa.portada ? <img src={urlArchivo(casa.portada)} alt="" /> : '—'}</td>
+                <td>{casa.portada ? <img src={urlArchivo(casa.portada)} alt="" loading="lazy" /> : '—'}</td>
                 <td>{casa.titulo}{casa.destacada && <span className="admin-badge">Destacada</span>}</td>
                 <td>{casa.ciudad}</td>
                 <td>{precio(casa.precio)}</td>

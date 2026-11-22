@@ -221,7 +221,7 @@ export default function CasaFormModal({ casaId, onHide, onGuardada }) {
                 <div className="admin-thumbs">
                   {imagenes.map((imagen) => (
                     <figure key={imagen.id}>
-                      <img src={urlArchivo(imagen.url)} alt={`Imagen ${imagen.orden}`} />
+                      <img src={urlArchivo(imagen.url)} alt={`Imagen ${imagen.orden}`} loading="lazy" />
                       <figcaption>
                         {imagen.esPortada ? 'Portada' : `#${imagen.orden}`}
                         <button type="button" onClick={() => quitarImagen(imagen)}>Quitar</button>

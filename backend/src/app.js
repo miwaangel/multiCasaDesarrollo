@@ -28,7 +28,8 @@ class App {
     this.express.use(cors({ origin: env.corsOrigin, exposedHeaders: ['Content-Disposition'] }));
     this.express.use(express.json({ limit: '1mb' }));
     this.express.use(express.urlencoded({ extended: true }));
-    this.express.use('/uploads', express.static(env.uploadsDir));
+    // Imágenes: el navegador las guarda en caché 1 día (los nombres de las subidas nunca se repiten)
+    this.express.use('/uploads', express.static(env.uploadsDir, { maxAge: '1d' }));
   }
 
   #routes() {
