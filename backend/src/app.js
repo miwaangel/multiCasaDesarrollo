@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
 const env = require('./config/env');
+const { especificacion, opcionesUi } = require('./config/swagger');
 const apiRoutes = require('./routes');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
@@ -30,6 +32,9 @@ class App {
   }
 
   #routes() {
+    // Documentación de la API (issue #18): antes de /api para que no la tape el router
+    this.express.get('/api/docs.json', (req, res) => res.json(especificacion));
+    this.express.use('/api/docs', swaggerUi.serve, swaggerUi.setup(especificacion, opcionesUi));
     this.express.use('/api', apiRoutes());
   }
 

@@ -79,6 +79,17 @@ const { sequelize } = Database.getInstance(); // siempre la misma instancia
 
 `new Database()` lanza un error; siempre se usa `getInstance()`.
 
+## Documentación de la API (Swagger)
+
+Con el backend corriendo:
+
+- **http://localhost:3000/api/docs**: Swagger UI con todos los endpoints; se pueden probar desde el navegador
+  (para las rutas `/api/admin/...`: login en `POST /api/auth/login`, copiar el `token` y pegarlo en **Authorize**).
+- **http://localhost:3000/api/docs.json**: la especificación OpenAPI 3 (se puede importar en Postman).
+
+Cada endpoint se documenta con un comentario `@openapi` en su archivo de `src/routes/`.
+La prueba `tests/docs.test.js` falla si un endpoint no está documentado o si el YAML tiene errores.
+
 ## Formato de respuestas de la API
 
 ```json

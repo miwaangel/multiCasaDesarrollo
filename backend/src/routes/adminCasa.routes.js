@@ -80,7 +80,7 @@ const {
  *             imagenes: { contentType: 'image/jpeg, image/png, image/webp' }
  *     responses:
  *       201: { description: '{ "data": { ...casa con imagenes, amenidades y formasPago } }' }
- *       400: { description: DATOS_INVALIDOS (con detalles por campo), ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE }
+ *       400: { description: 'DATOS_INVALIDOS (con detalles por campo), ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE' }
  *       401: { description: TOKEN_REQUERIDO / TOKEN_INVALIDO }
  *
  * /api/admin/casas/{id}:
@@ -103,7 +103,7 @@ const {
  *           schema: { $ref: '#/components/schemas/CasaMultipart' }
  *     responses:
  *       200: { description: '{ "data": { ...casa actualizada } }' }
- *       400: { description: DATOS_INVALIDOS, ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE }
+ *       400: { description: 'DATOS_INVALIDOS, ARCHIVO_INVALIDO o ARCHIVO_MUY_GRANDE' }
  *       404: { description: CASA_NO_ENCONTRADA }
  *   delete:
  *     tags: [Casas (admin)]
