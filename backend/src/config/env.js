@@ -57,6 +57,7 @@ const env = Object.freeze({
     user: process.env.MAIL_USER || '',
     password: process.env.MAIL_PASSWORD || '',
     to: process.env.MAIL_TO || '',
+    from: process.env.MAIL_FROM || '',
   }),
 });
 

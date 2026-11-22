@@ -1,32 +1,80 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../services/api'
 
+// Mismos valores que la columna mensajes_contacto.asunto (POST /api/contacto)
+const ASUNTOS = {
+  informacion: 'Solicitar información',
+  vender: 'Quiero vender mi casa',
+  construir: 'Construir',
+  mudanzas: 'Mudanzas',
+  seguros: 'Seguros',
+  otro: 'Otro',
+}
+
+const VACIO = { nombre: '', email: '', telefono: '', asunto: 'informacion', mensaje: '', sitioWeb: '' }
+
+/**
+ * Formulario de contacto.
+ * - /contacto?asunto=vender (o construir, mudanzas, seguros...) preselecciona el asunto.
+ * - /contacto?casa=3 (botón "Me interesa") muestra la casa y la manda como casaId.
+ */
 export default function Contact() {
   const [searchParams] = useSearchParams()
-  const casaId = searchParams.get('casa')
-  const [message, setMessage] = useState({
-    nombre: '',
-    correo: '',
-    telefono: '',
-    asunto: searchParams.get('asunto') || (casaId ? `Casa de interés ${casaId}` : ''),
-    mensaje: casaId ? `Estoy interesado en la casa con ID ${casaId}.` : '',
-  })
-  const [status, setStatus] = useState('')
+  const casaId = Number(searchParams.get('casa')) || null
+  const asuntoUrl = searchParams.get('asunto')
 
+  const [message, setMessage] = useState(() => ({
+    ...VACIO,
+    asunto: ASUNTOS[asuntoUrl] ? asuntoUrl : 'informacion',
+  }))
+  const [casa, setCasa] = useState(null)
+  const [enviando, setEnviando] = useState(false)
+  const [status, setStatus] = useState({ tipo: '', texto: '' })
+  const [errores, setErrores] = useState({})
+
+  useEffect(() => {
+    if (!casaId) return undefined
+    let vigente = true
+    api.get(`/casas/${casaId}`)
+      .then(({ data }) => {
+        if (!vigente) return
+        setCasa(data.data)
+        setMessage((actual) => ({
+          ...actual,
+          mensaje: actual.mensaje || `Me interesa la casa "${data.data.titulo}" y quiero más información.`,
+        }))
+      })
+      .catch(() => {})
+    return () => { vigente = false }
+  }, [casaId])
+
+  const update = (event) => {
+    const { name, value } = event.target
+    setMessage((actual) => ({ ...actual, [name]: value }))
+    setErrores((actual) => ({ ...actual, [name]: undefined }))
+  }
 
   const submit = async (event) => {
     event.preventDefault()
-    setStatus('')
+    setStatus({ tipo: '', texto: '' })
+    setErrores({})
+    setEnviando(true)
     try {
-      await api.post('/contacto', message)
-      setStatus('Tu mensaje fue enviado.')
-      setMessage({ nombre: '', correo: '', telefono: '', asunto: '', mensaje: '' })
+      await api.post('/contacto', { ...message, casaId: casa ? casa.id : null })
+      setStatus({ tipo: 'ok', texto: 'Recibimos tu mensaje. Un asesor te contactará pronto.' })
+      setMessage({ ...VACIO, asunto: message.asunto })
     } catch (error) {
-      setStatus(error.message)
+      setErrores(Object.fromEntries(error.detalles.map((d) => [d.campo, d.mensaje])))
+      setStatus({ tipo: 'error', texto: error.message })
+    } finally {
+      setEnviando(false)
     }
   }
+
+  const campo = (name) => ({ name, value: message[name], onChange: update, isInvalid: Boolean(errores[name]) })
+  const error = (name) => <Form.Control.Feedback type="invalid">{errores[name]}</Form.Control.Feedback>
 
   return (
     <Container fluid="lg" className="contact-page">
@@ -34,14 +82,52 @@ export default function Contact() {
         <section>
           <h1>Contacto</h1>
           <p>Escríbenos y un asesor te responderá.</p>
-          <Form className="contact-form" onSubmit={submit}>
-            {status && <p className="form-status">{status}</p>}
-            <Form.Control required placeholder="Nombre" value={message.nombre} onChange={(event) => setMessage({ ...message, nombre: event.target.value })} />
-            <Form.Control required type="email" placeholder="Correo" value={message.correo} onChange={(event) => setMessage({ ...message, correo: event.target.value })} />
-            <Form.Control type="tel" placeholder="Teléfono" value={message.telefono} onChange={(event) => setMessage({ ...message, telefono: event.target.value })} />
-            <Form.Control required placeholder="Asunto" value={message.asunto} onChange={(event) => setMessage({ ...message, asunto: event.target.value })} />
-            <Form.Control required as="textarea" rows={5} placeholder="Mensaje" value={message.mensaje} onChange={(event) => setMessage({ ...message, mensaje: event.target.value })} />
-            <Button type="submit">Enviar mensaje</Button>
+
+          {casa && (
+            <p className="form-status">
+              Te interesa: <Link to={`/casas/${casa.id}`}>{casa.titulo}</Link> · {casa.ciudad} · ${Number(casa.precio).toLocaleString('es-MX')}
+            </p>
+          )}
+
+          <Form className="contact-form" onSubmit={submit} noValidate>
+            {status.texto && <p className="form-status" role={status.tipo === 'error' ? 'alert' : 'status'}>{status.texto}</p>}
+
+            <Form.Group>
+              <Form.Control required placeholder="Nombre" maxLength={100} {...campo('nombre')} />
+              {error('nombre')}
+            </Form.Group>
+            <Form.Group>
+              <Form.Control required type="email" placeholder="Correo" maxLength={150} {...campo('email')} />
+              {error('email')}
+            </Form.Group>
+            <Form.Group>
+              <Form.Control type="tel" placeholder="Teléfono (opcional)" maxLength={20} {...campo('telefono')} />
+              {error('telefono')}
+            </Form.Group>
+            <Form.Group>
+              <Form.Select aria-label="Asunto" {...campo('asunto')}>
+                {Object.entries(ASUNTOS).map(([valor, texto]) => <option key={valor} value={valor}>{texto}</option>)}
+              </Form.Select>
+              {error('asunto')}
+            </Form.Group>
+            <Form.Group>
+              <Form.Control required as="textarea" rows={5} placeholder="Mensaje" maxLength={2000} {...campo('mensaje')} />
+              {error('mensaje')}
+            </Form.Group>
+
+            {/* Campo trampa para bots: invisible para las personas */}
+            <input
+              type="text"
+              name="sitioWeb"
+              value={message.sitioWeb}
+              onChange={update}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }}
+            />
+
+            <Button type="submit" disabled={enviando}>{enviando ? 'Enviando...' : 'Enviar mensaje'}</Button>
           </Form>
         </section>
       </div>

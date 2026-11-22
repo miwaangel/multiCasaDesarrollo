@@ -65,7 +65,7 @@ export default function PropertyDetail() {
         </section>
         <aside className="detail-actions">
           <button type="button" className="detail-button" onClick={descargarPDF}>Descargar ficha en PDF</button>
-          <Link className="detail-button interest" to={`/contacto?casa=${casa.id}&asunto=Me interesa ${encodeURIComponent(casa.titulo)}`}>Me interesa</Link>
+          <Link className="detail-button interest" to={`/contacto?casa=${casa.id}`}>Me interesa</Link>
         </aside>
       </div>
       <MapContainer center={[Number(casa.latitud || 25.6866), Number(casa.longitud || -100.3161)]} zoom={14} scrollWheelZoom className="detail-map">

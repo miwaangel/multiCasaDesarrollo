@@ -22,7 +22,10 @@ api.interceptors.response.use(
     const message = error.response?.data?.error?.mensaje
       || error.response?.data?.mensaje
       || 'No fue posible completar la solicitud'
-    return Promise.reject(new Error(message))
+    const err = new Error(message)
+    // Errores de validación: [{ campo, mensaje }] para marcar cada campo del formulario
+    err.detalles = error.response?.data?.error?.detalles || []
+    return Promise.reject(err)
   },
 )
 
