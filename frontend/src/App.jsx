@@ -9,6 +9,7 @@ import AdminPanel from './pages/AdminPanel'
 import Contact from './pages/Contact'
 import Dashboard from './pages/Dashboard'
 import Company from './pages/Company'
+import RegistroVisitas from './components/RegistroVisitas'
 import './App.css'
 
 const headerImages = [
@@ -46,6 +47,7 @@ function App() {
         </Container>
       </header>
 
+      <RegistroVisitas />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
