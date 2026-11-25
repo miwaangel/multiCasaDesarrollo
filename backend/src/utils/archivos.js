@@ -71,4 +71,4 @@ function rutaDeLectura(url) {
   return null;
 }
 
-module.exports = { CARPETAS_SUBIDAS, dirDe, urlDeArchivo, rutaDeUrl, rutaDeLectura, eliminarArchivos };
+module.exports = { CARPETAS_SUBIDAS, UPLOADS_REPO, dirDe, urlDeArchivo, rutaDeUrl, rutaDeLectura, eliminarArchivos };

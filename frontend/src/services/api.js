@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+// En desarrollo la API corre aparte (puerto 3000). En el build de producción, si no se indica
+// VITE_API_URL, se usa "/api" porque el backend sirve el sitio y la API en la misma URL.
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api'),
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -38,7 +40,7 @@ api.interceptors.response.use(
  * La API regresa rutas de imagen relativas ("/uploads/seed/casa-01-1.jpg").
  * Se sirven desde el servidor del backend, no desde Vite: se les antepone su origen.
  */
-const API_ORIGIN = new URL(api.defaults.baseURL).origin
+const API_ORIGIN = new URL(api.defaults.baseURL, window.location.origin).origin
 
 export function urlArchivo(ruta) {
   if (!ruta) return ''
