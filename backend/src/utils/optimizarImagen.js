@@ -2,6 +2,9 @@ const fs = require('fs/promises');
 const path = require('path');
 const sharp = require('sharp');
 
+// Sin caché: en Windows sharp deja abierto el archivo original y luego no se puede borrar (EBUSY)
+sharp.cache(false);
+
 /** Tamaño máximo (lado mayor) y calidad de las imágenes que se guardan. */
 const OPCIONES = Object.freeze({ maxLado: 1600, calidad: 80 });
 

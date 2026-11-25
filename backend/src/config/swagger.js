@@ -71,7 +71,8 @@ const definicion = {
 
 const especificacion = swaggerJsdoc({
   definition: definicion,
-  apis: [path.join(__dirname, '../routes/*.js')],
+  // El glob necesita "/" aunque estemos en Windows (path.join pondría "\" y no encontraría nada)
+  apis: [path.join(__dirname, '../routes/*.js').replace(/\\/g, '/')],
   failOnErrors: true, // un comentario @openapi mal escrito truena al arrancar, no en silencio
 });
 
