@@ -1,0 +1,13 @@
+{
+  "name": "multicasa",
+  "version": "1.0.0",
+  "description": "MultiCasa: scripts para construir y arrancar backend + frontend en un solo servicio (issue #31)",
+  "private": true,
+  "scripts": {
+    "build": "npm ci --prefix backend --include=dev && npm ci --prefix frontend --include=dev && npm run build --prefix frontend",
+    "start": "npm run db:migrate --prefix backend && npm run db:seed --prefix backend && npm start --prefix backend"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

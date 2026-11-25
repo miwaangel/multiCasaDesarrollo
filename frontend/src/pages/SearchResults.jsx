@@ -1,85 +1,98 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
 import { Link, useSearchParams } from 'react-router-dom'
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
-import api from '../services/api'
-import { casasMock } from '../data/mockData'
+import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
+import api, { urlArchivo } from '../services/api'
 import SearchSidebar from '../components/SearchSidebar'
+
+const CENTRO_INICIAL = [25.6866, -100.3161]
+const precio = (valor) => `$${Number(valor).toLocaleString('es-MX')}`
+
+/** Leaflet no mueve el mapa cuando cambian las props: se ajusta a mano a los resultados. */
+function AjustarMapa({ casas, centro }) {
+  const map = useMap()
+
+  useEffect(() => {
+    const puntos = casas.map((casa) => [casa.lat, casa.lng])
+    if (centro) puntos.push([centro.lat, centro.lng])
+    if (puntos.length === 1) map.setView(puntos[0], 14)
+    else if (puntos.length > 1) map.fitBounds(puntos, { padding: [30, 30], maxZoom: 15 })
+  }, [map, casas, centro])
+
+  return null
+}
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams()
-  const [casas, setCasas] = useState(casasMock)
+  const consulta = searchParams.toString()
+  // Resultado de la última respuesta; mientras no coincida con la consulta actual, está "buscando"
+  const [resultado, setResultado] = useState({ consulta: null, casas: [], centro: null, error: '' })
 
+  // El backend filtra todo (GET /api/casas/buscar); aquí solo se muestran los resultados
   useEffect(() => {
-    api.get('/casas', { params: Object.fromEntries(searchParams.entries()) })
-      .then(({ data }) => setCasas(data.data || data || casasMock))
-      .catch(() => {})
-  }, [searchParams])
+    let vigente = true
 
-  const filtered = useMemo(() => casas.filter((casa) => {
-    const ubicacion = (searchParams.get('ubicacion') || '').toLowerCase()
-    const matchesLocation = !ubicacion
-      || casa.ciudad?.toLowerCase().includes(ubicacion)
-      || casa.codigo_postal?.includes(ubicacion)
-    const matchesMin = !searchParams.get('precio_min') || casa.precio >= Number(searchParams.get('precio_min'))
-    const matchesMax = !searchParams.get('precio_max') || casa.precio <= Number(searchParams.get('precio_max'))
-    const matchesRooms = !searchParams.get('recamaras') || casa.recamaras >= Number(searchParams.get('recamaras'))
-    const matchesBaths = !searchParams.get('banos') || casa.banos >= Number(searchParams.get('banos'))
-    const radio = Number(searchParams.get('radio') || 0)
-    let matchesRadius = true
-    if (radio && ubicacion) {
-      const referencia = casas.find((item) =>
-        item.ciudad?.toLowerCase().includes(ubicacion)
-        || item.codigo_postal?.includes(ubicacion),
-      )
-      if (referencia?.latitud && referencia?.longitud && casa.latitud && casa.longitud) {
-        const toRadians = (value) => value * Math.PI / 180
-        const earthRadiusKm = 6371
-        const latDistance = toRadians(Number(casa.latitud) - Number(referencia.latitud))
-        const lonDistance = toRadians(Number(casa.longitud) - Number(referencia.longitud))
-        const a = Math.sin(latDistance / 2) ** 2
-          + Math.cos(toRadians(Number(referencia.latitud))) * Math.cos(toRadians(Number(casa.latitud)))
-          * Math.sin(lonDistance / 2) ** 2
-        const distanceKm = 2 * earthRadiusKm * Math.asin(Math.sqrt(a))
-        matchesRadius = distanceKm <= radio
-      }
-    }
-    return matchesLocation && matchesRadius && matchesMin && matchesMax && matchesRooms && matchesBaths
-  }), [casas, searchParams])
+    api.get('/casas/buscar', { params: Object.fromEntries(new URLSearchParams(consulta)) })
+      .then(({ data }) => {
+        if (vigente) setResultado({ consulta, casas: data.data, centro: data.centro, error: '' })
+      })
+      .catch((error) => {
+        if (vigente) setResultado({ consulta, casas: [], centro: null, error: error.message })
+      })
 
-  const center = filtered.some((casa) => casa.latitud && casa.longitud)
-    ? [Number(filtered.find((casa) => casa.latitud)?.latitud), Number(filtered.find((casa) => casa.latitud)?.longitud)]
-    : [25.6866, -100.3161]
+    return () => { vigente = false }
+  }, [consulta])
+
+  const cargando = resultado.consulta !== consulta
+  const { casas, centro } = resultado
+  const estado = { cargando, error: resultado.error }
 
   return (
     <Container fluid="lg" className="search-page">
       <div className="search-layout">
         <main className="results-column">
-          <div className="results-heading"><h1>Resultados de búsqueda</h1><span>{filtered.length} propiedades</span></div>
+          <div className="results-heading">
+            <h1>Resultados de búsqueda</h1>
+            <span>{estado.cargando ? 'Buscando...' : `${casas.length} propiedades`}</span>
+          </div>
           <div className="property-results">
-            {filtered.map((casa) => (
+            {casas.map((casa) => (
               <article className="property-card" key={casa.id}>
-                <img src={casa.imagen_principal || '/images/header-1.svg'} alt={casa.titulo} />
+                <img src={urlArchivo(casa.portada) || '/images/header-1.svg'} alt={casa.titulo} loading="lazy" decoding="async" />
                 <div>
                   <h2>{casa.titulo}</h2>
-                  <p>{casa.ciudad} · {casa.recamaras} recámaras · {casa.banos} baños</p>
-                  <strong>${Number(casa.precio).toLocaleString('es-MX')}</strong>
+                  <p>
+                    {casa.colonia}, {casa.ciudad} · {casa.recamaras} recámaras · {casa.banos} baños
+                    {casa.distanciaKm !== undefined && ` · a ${casa.distanciaKm} km`}
+                  </p>
+                  <strong>{precio(casa.precio)}</strong>
                   <Link to={`/casas/${casa.id}`}>Ver detalles</Link>
                 </div>
               </article>
             ))}
-            {filtered.length === 0 && <p className="empty-results">No encontramos casas con esos filtros.</p>}
+            {!estado.cargando && estado.error && <p className="empty-results" role="alert">{estado.error}</p>}
+            {!estado.cargando && !estado.error && casas.length === 0 && (
+              <p className="empty-results">No encontramos casas con esos filtros.</p>
+            )}
           </div>
-          <MapContainer center={center} zoom={11} scrollWheelZoom className="results-map">
+          <MapContainer center={CENTRO_INICIAL} zoom={11} scrollWheelZoom className="results-map">
             <TileLayer attribution="&copy; OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            {filtered.filter((casa) => casa.latitud && casa.longitud).map((casa) => (
-              <Marker key={casa.id} position={[Number(casa.latitud), Number(casa.longitud)]}>
-                <Popup><strong>{casa.titulo}</strong><br />${Number(casa.precio).toLocaleString('es-MX')}</Popup>
+            <AjustarMapa casas={casas} centro={centro} />
+            {centro && (
+              <Circle center={[centro.lat, centro.lng]} radius={centro.radioKm * 1000} pathOptions={{ color: '#1f6fa8', fillOpacity: 0.08 }} />
+            )}
+            {casas.map((casa) => (
+              <Marker key={casa.id} position={[casa.lat, casa.lng]}>
+                <Popup>
+                  <strong>{casa.titulo}</strong><br />
+                  {precio(casa.precio)}<br />
+                  <Link to={`/casas/${casa.id}`}>Ver detalles</Link>
+                </Popup>
               </Marker>
             ))}
           </MapContainer>
         </main>
-        <SearchSidebar />
+        <SearchSidebar key={consulta} />
       </div>
     </Container>
   )

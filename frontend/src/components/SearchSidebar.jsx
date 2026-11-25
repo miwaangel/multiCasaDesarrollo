@@ -1,27 +1,42 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap'
-import { noticiasMock } from '../data/mockData'
 import api from '../services/api'
+import { EVENTO_VISITA } from './RegistroVisitas'
+import { MENU_SERVICIOS } from './menuServicios'
+
+// Mismos nombres que GET /api/casas/buscar (contrato de la API, sección 2.6)
+const FILTROS = ['ubicacion', 'radioKm', 'precioMin', 'precioMax', 'recamaras', 'banos']
+
+const fechaNoticia = (iso) => new Date(iso).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+// Contador estilo odómetro del PSD (07899): un cuadro por dígito
+const digitos = (valor, minimo) => (valor === null ? '-'.repeat(minimo) : String(valor).padStart(minimo, '0'))
+  .split('').map((d, i) => <span key={i}>{d}</span>)
 
 export default function SearchSidebar() {
   const navigate = useNavigate()
-  const [news, setNews] = useState(noticiasMock)
-  const [filters, setFilters] = useState({ ubicacion: '', radio: '', precio_min: '', precio_max: '', recamaras: '', banos: '' })
-  const [visitas] = useState(() => {
-    const saved = Number(sessionStorage.getItem('multicasa_visitas') || 1284)
-    const next = saved + 1
-    sessionStorage.setItem('multicasa_visitas', String(next))
-    return next
-  })
-  const [conectados, setConectados] = useState(24)
+  const [searchParams] = useSearchParams()
+  const [news, setNews] = useState([])
+  // En /buscar el formulario muestra los filtros con los que se hizo la búsqueda
+  const [filters, setFilters] = useState(() =>
+    Object.fromEntries(FILTROS.map((nombre) => [nombre, searchParams.get(nombre) || ''])))
+  const [contador, setContador] = useState({ visitas: null, conectados: null })
 
+  // Noticias activas de la API (GET /api/noticias)
   useEffect(() => {
-    api.get('/noticias').then(({ data }) => setNews(data.data || data || noticiasMock)).catch(() => {})
-    const interval = window.setInterval(() => {
-      setConectados((current) => 20 + ((current * 7) % 17))
-    }, 5000)
-    return () => window.clearInterval(interval)
+    api.get('/noticias').then(({ data }) => setNews(data.data)).catch(() => setNews([]))
+  }, [])
+
+  // Contador real (GET /api/visitas/resumen): al registrarse una visita y cada 30 s
+  useEffect(() => {
+    const actualizar = () => api.get('/visitas/resumen').then(({ data }) => setContador(data.data)).catch(() => {})
+    actualizar()
+    window.addEventListener(EVENTO_VISITA, actualizar)
+    const intervalo = window.setInterval(actualizar, 30000)
+    return () => {
+      window.removeEventListener(EVENTO_VISITA, actualizar)
+      window.clearInterval(intervalo)
+    }
   }, [])
 
   const update = (event) => setFilters((current) => ({ ...current, [event.target.name]: event.target.value }))
@@ -37,18 +52,23 @@ export default function SearchSidebar() {
 
   return (
     <aside className="search-sidebar">
+      {/* Menú derecho del PSD, junto al banner (con over state) */}
+      <nav className="menu-derecho" aria-label="Servicios">
+        {MENU_SERVICIOS.map((enlace) => <Link key={enlace.texto} to={enlace.to}>{enlace.texto}</Link>)}
+      </nav>
+
       <section className="sidebar-block">
         <h2>Encuentra tu futura propiedad</h2>
         <Form onSubmit={submit}>
           <Form.Control name="ubicacion" value={filters.ubicacion} onChange={update} placeholder="C.P. o ciudad" aria-label="Ciudad o código postal" />
-          <Form.Select name="radio" value={filters.radio} onChange={update} aria-label="Radio de búsqueda">
+          <Form.Select name="radioKm" value={filters.radioKm} onChange={update} aria-label="Radio de búsqueda">
             <option value="">Sin rango</option><option value="2">2 km</option><option value="5">5 km</option><option value="10">10 km</option><option value="20">20 km</option>
           </Form.Select>
           <div className="two-fields">
-            <Form.Select name="precio_min" value={filters.precio_min} onChange={update} aria-label="Precio mínimo">
+            <Form.Select name="precioMin" value={filters.precioMin} onChange={update} aria-label="Precio mínimo">
               <option value="">Precio desde</option><option value="1000000">$1,000,000</option><option value="2000000">$2,000,000</option><option value="3000000">$3,000,000</option><option value="5000000">$5,000,000</option>
             </Form.Select>
-            <Form.Select name="precio_max" value={filters.precio_max} onChange={update} aria-label="Precio máximo">
+            <Form.Select name="precioMax" value={filters.precioMax} onChange={update} aria-label="Precio máximo">
               <option value="">Precio hasta</option><option value="2000000">$2,000,000</option><option value="3000000">$3,000,000</option><option value="5000000">$5,000,000</option><option value="10000000">$10,000,000</option>
             </Form.Select>
           </div>
@@ -62,15 +82,28 @@ export default function SearchSidebar() {
 
       <section className="sidebar-block">
         <h2>Información de última hora</h2>
-        <div className="news-scroll" aria-live="polite">
-          {news.map((item) => <article key={item.id}><time>{item.fecha}</time><strong>{item.titulo}</strong></article>)}
-        </div>
+        {news.length === 0 ? <p className="news-vacio">Sin noticias por ahora.</p> : (
+          // La lista va dos veces para que el desplazamiento vertical sea continuo (se pausa con el mouse)
+          <div className="news-scroll">
+            <div className={`news-track${news.length > 2 ? ' animada' : ''}`} style={{ '--duracion': `${news.length * 6}s` }}>
+              {[...news, ...(news.length > 2 ? news : [])].map((item, i) => (
+                <article key={`${item.id}-${i}`} aria-hidden={i >= news.length ? 'true' : undefined}>
+                  <time dateTime={item.fechaPublicacion}>{fechaNoticia(item.fechaPublicacion)}</time>
+                  <strong>{item.titulo}</strong>
+                  <span>{item.resumen}</span>
+                  {/* La copia de la lista (aria-hidden) no recibe el foco del teclado */}
+                  <Link className="news-mas" to={`/noticias/${item.id}`} tabIndex={i >= news.length ? -1 : undefined}>Ver más...</Link>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="sidebar-block counters">
         <h2>Actividad</h2>
-        <div><span>Conectados</span><strong className="odometer">{conectados}</strong></div>
-        <div><span>Visitas</span><strong className="odometer">{visitas.toLocaleString('es-MX')}</strong></div>
+        <div><span>Conectados</span><strong className="odometer">{digitos(contador.conectados, 3)}</strong></div>
+        <div><span>Visitas</span><strong className="odometer">{digitos(contador.visitas, 5)}</strong></div>
       </section>
     </aside>
   )
