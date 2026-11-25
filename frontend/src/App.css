@@ -1,6 +1,6 @@
 .site-shell { min-height: 100vh; display: flex; flex-direction: column; }
 .site-header { height: 300px; background-size: cover; background-position: center; border-bottom: 5px solid #b87932; }
-.header-content { height: 82px; display: flex; align-items: center; position: relative; }
+.header-content { height: 130px; display: flex; align-items: flex-start; padding-top: 14px; position: relative; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-size: 22px; letter-spacing: 1px; text-shadow: 0 1px 3px #000; }
 .brand:hover { color: #fff; }
 .brand-mark { display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid #fff; border-radius: 50%; font-family: Georgia, serif; font-size: 30px; background: #1f5d70; }
@@ -8,6 +8,24 @@
 .top-navbar .navbar-toggler { margin: 8px; border-color: rgba(255,255,255,.6); }
 .top-navbar .nav-link { color: #fff; padding: 12px 18px; border-right: 1px solid rgba(255,255,255,.12); }
 .top-navbar .nav-link:hover, .top-navbar .nav-link.active { background: #b87932; }
+/* Esquina superior derecha del PSD: teléfono y links Inicio · Buscar · Admin. */
+.header-tools { position: absolute; top: 18px; right: 12px; display: flex; align-items: center; gap: 18px; }
+.header-phone { padding: 5px 12px; background: rgba(255,255,255,.92); border-radius: 3px; color: #2f5260; font-size: 14px; text-decoration: none; }
+.header-phone strong { color: #1f5d70; }
+.header-links { display: flex; gap: 14px; }
+.header-links a { color: #fff; font-size: 14px; font-weight: 700; text-decoration: none; text-shadow: 0 1px 3px #000; }
+.header-links a::before { content: ''; display: inline-block; width: 9px; height: 9px; margin-right: 5px; background: #8dc63f; border: 1px solid #fff; }
+.header-links a:hover, .header-links a.active { color: #f2c48d; }
+/* Menú derecho del PSD (Compra, Construir...) con over state */
+.menu-derecho { display: flex; flex-direction: column; background: linear-gradient(#3f6f82, #2f5260); }
+.menu-derecho a { padding: 7px 16px; border-bottom: 1px solid rgba(255,255,255,.14); color: #fff; font-weight: 700; text-align: right; text-decoration: none; text-transform: uppercase; transition: background .2s, padding-right .2s; }
+.menu-derecho a:hover, .menu-derecho a:focus-visible { background: #b87932; padding-right: 24px; }
+.news-mas { align-self: flex-start; color: #9b6428; font-size: 12px; font-weight: 700; }
+.footer-grid a:hover { color: #f2c48d; }
+.noticia-page { padding: 30px 12px 50px; }
+.noticia-detalle { max-width: 760px; }
+.noticia-detalle time { display: block; margin-bottom: 16px; color: #777; }
+.noticia-detalle img { width: 100%; max-height: 360px; margin-bottom: 18px; object-fit: cover; }
 main { flex: 1; }
 .page-placeholder { max-width: 1000px; min-height: 420px; margin: 0 auto; padding: 70px 24px; text-align: center; }
 .site-footer { background: #18313d; color: #d8e2e6; padding: 30px 0 12px; }
@@ -131,8 +149,18 @@ main { flex: 1; }
   .property-slider, .property-slider img { height: 300px; }
 }
 
+@media (max-width: 991px) {
+  .header-phone { display: none; }
+  .menu-derecho { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .menu-derecho a { padding: 9px 6px; text-align: center; font-size: 13px; }
+  .menu-derecho a:hover, .menu-derecho a:focus-visible { padding-right: 6px; }
+}
+
 @media (max-width: 600px) {
   .brand { font-size: 16px; }
+  .header-tools { top: 14px; }
+  .header-links { gap: 10px; }
+  .header-links a { font-size: 12px; }
   .news-admin-form { grid-template-columns: 1fr; }
   .brand-mark { width: 40px; height: 40px; font-size: 24px; }
   .property-slider, .property-slider img { height: 260px; }

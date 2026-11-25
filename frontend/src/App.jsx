@@ -15,6 +15,8 @@ import Servicios from './pages/Servicios'
 import Requisitos from './pages/Requisitos'
 import Ayuda from './pages/Ayuda'
 import Politicas from './pages/Politicas'
+import NoticiaDetalle from './pages/NoticiaDetalle'
+import { MENU_SERVICIOS } from './components/menuServicios'
 import './App.css'
 
 const headerImages = [
@@ -37,6 +39,16 @@ function App() {
             <span className="brand-mark">M</span>
             <span><strong>MULTI</strong>CASA</span>
           </NavLink>
+          {/* Esquina superior derecha del PSD: teléfono y links Inicio · Buscar · Admin. */}
+          <div className="header-tools">
+            <a className="header-phone" href="tel:18001234567">Llama al: <strong>1-800-123-4567</strong></a>
+            <nav className="header-links" aria-label="Accesos rápidos">
+              <NavLink to="/" end>Inicio</NavLink>
+              <NavLink to="/buscar">Buscar</NavLink>
+              <NavLink to="/admin">Admin.</NavLink>
+            </nav>
+          </div>
+          {/* Menú superior del PSD (con rollover) */}
           <Navbar expand="lg" className="top-navbar" variant="dark">
             <Navbar.Toggle aria-controls="main-navigation" />
             <Navbar.Collapse id="main-navigation">
@@ -45,9 +57,7 @@ function App() {
                 <NavLink className="nav-link" to="/compania">La Compañía</NavLink>
                 <NavLink className="nav-link" to="/servicios">Servicios</NavLink>
                 <NavLink className="nav-link" to="/requisitos">Requisitos</NavLink>
-                <NavLink className="nav-link" to="/buscar">Buscar</NavLink>
-                <NavLink className="nav-link" to="/contacto">Contacto</NavLink>
-                <NavLink className="nav-link" to="/admin">Admin.</NavLink>
+                <NavLink className="nav-link" to="/contacto">Contactos</NavLink>
               </Nav>
             </Navbar.Collapse>
           </Navbar>
@@ -67,6 +77,7 @@ function App() {
           <Route path="/requisitos" element={<Requisitos />} />
           <Route path="/ayuda" element={<Ayuda />} />
           <Route path="/politicas" element={<Politicas />} />
+          <Route path="/noticias/:id" element={<NoticiaDetalle />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/panel" element={<AdminPanel />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
@@ -81,12 +92,7 @@ function App() {
             {/* Mismos enlaces que el pie del PSD */}
             <nav aria-label="Servicios">
               <Link to="/">Inicio</Link>
-              <Link to="/buscar">Compra</Link>
-              <Link to="/servicios#construir">Construir</Link>
-              <Link to="/contacto?asunto=vender">Venta</Link>
-              <Link to="/servicios#mudanzas">Mudanzas</Link>
-              <Link to="/servicios#seguros">Seguros</Link>
-              <Link to="/contacto">Contactos</Link>
+              {MENU_SERVICIOS.map((enlace) => <Link key={enlace.texto} to={enlace.to}>{enlace.texto}</Link>)}
             </nav>
           </div>
           <nav className="footer-legal" aria-label="Ayuda y políticas">
