@@ -145,11 +145,11 @@ Se ejecutan con el sistema corriendo (backend + frontend) y los datos de los see
 
 | Navegador / dispositivo | Home | Búsqueda + mapa | Detalle + PDF | Panel admin | Observaciones |
 |---|---|---|---|---|---|
-| Chrome (Windows) | | | | | |
-| Edge (Windows) | | | | | |
-| Brave (Windows) | | | | | |
-| Firefox (Windows) | | | | | |
-| Safari (macOS / iPhone) | | | | | |
+| Chrome (Windows) | ✔ | ✔ | ✔ | ✔ | Funciona bien |
+| Edge (Windows) | ✔ | ✔ | ✔ | ✔ | Funciona bien |
+| Brave (Windows) | | | | | No se probó |
+| Firefox (Windows) | ✔ | ✔ | ✔ | ✔ | Funciona bien |
+| Safari (macOS / iPhone) | | | | | No se probó |
 | Celular (Android, ~390 px) | | | | | La barra lateral baja debajo del contenido y el menú se vuelve hamburguesa |
 
 ## 7. Conclusión
