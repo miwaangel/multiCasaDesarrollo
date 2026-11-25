@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap'
 import api from '../services/api'
 import { EVENTO_VISITA } from './RegistroVisitas'
+import { MENU_SERVICIOS } from './menuServicios'
 
 // Mismos nombres que GET /api/casas/buscar (contrato de la API, sección 2.6)
 const FILTROS = ['ubicacion', 'radioKm', 'precioMin', 'precioMax', 'recamaras', 'banos']
@@ -51,6 +52,11 @@ export default function SearchSidebar() {
 
   return (
     <aside className="search-sidebar">
+      {/* Menú derecho del PSD, junto al banner (con over state) */}
+      <nav className="menu-derecho" aria-label="Servicios">
+        {MENU_SERVICIOS.map((enlace) => <Link key={enlace.texto} to={enlace.to}>{enlace.texto}</Link>)}
+      </nav>
+
       <section className="sidebar-block">
         <h2>Encuentra tu futura propiedad</h2>
         <Form onSubmit={submit}>
@@ -85,6 +91,8 @@ export default function SearchSidebar() {
                   <time dateTime={item.fechaPublicacion}>{fechaNoticia(item.fechaPublicacion)}</time>
                   <strong>{item.titulo}</strong>
                   <span>{item.resumen}</span>
+                  {/* La copia de la lista (aria-hidden) no recibe el foco del teclado */}
+                  <Link className="news-mas" to={`/noticias/${item.id}`} tabIndex={i >= news.length ? -1 : undefined}>Ver más...</Link>
                 </article>
               ))}
             </div>
