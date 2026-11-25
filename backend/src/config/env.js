@@ -18,6 +18,10 @@ const env = Object.freeze({
   // Carpeta de archivos subidos (se sirve en /uploads). Las pruebas usan una carpeta temporal.
   uploadsDir: process.env.UPLOADS_DIR || path.resolve(__dirname, '../../uploads'),
 
+  // Build del front (npm run build en frontend/). Si existe, el backend también sirve el sitio:
+  // en producción todo queda en una sola URL (issue #31). En desarrollo se usa Vite aparte.
+  frontendDir: process.env.FRONTEND_DIR || path.resolve(__dirname, '../../../frontend/dist'),
+
   db: Object.freeze({
     host: process.env.DB_HOST || 'localhost',
     port: Number(process.env.DB_PORT) || 3306,
