@@ -36,6 +36,31 @@ multiCasaDesarrollo/
 ## Documentación
 
 - [Modelo físico de la base de datos](docs/base-de-datos/README.md): diagrama entidad-relación, tablas, índices, vistas y script SQL de referencia.
+- [Implementación: manual de instalación y despliegue](docs/implementacion/README.md): correr el sistema en local y publicarlo en un servidor.
+- [Pruebas](docs/pruebas/README.md): pruebas automatizadas (Jest + Supertest), cobertura y casos de prueba manuales del sitio.
+
+## Inicio rápido (local)
+
+Requisitos: **Node.js 20+** y **MySQL 8** (por ejemplo con XAMPP). Detalle completo en el [manual de instalación](docs/implementacion/README.md).
+
+```bash
+# 1. Backend (terminal 1)
+cd backend
+npm install
+cp .env.example .env      # en Windows: copy .env.example .env  → poner DB_PASSWORD, JWT_SECRET y VISITAS_SALT
+npm run db:create
+npm run db:migrate
+npm run db:seed
+npm run dev               # API en http://localhost:3000/api
+
+# 2. Frontend (terminal 2)
+cd frontend
+npm install
+cp .env.example .env      # VITE_API_URL=http://localhost:3000/api
+npm run dev               # sitio en http://localhost:5173
+```
+
+Admin de prueba: `admin@multicasa.com` / `Admin123!` (link **Admin.** del menú superior).
 
 ## Patrones de diseño
 
@@ -155,7 +180,7 @@ Si la validación de express-validator falla (middleware `validar`), el error tr
 
 ## Cómo correr el backend
 
-Requisitos: Node.js 18 o superior y MySQL 8.
+Requisitos: Node.js 20 o superior y MySQL 8.
 
 ```bash
 cd backend
